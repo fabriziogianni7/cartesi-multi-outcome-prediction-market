@@ -17,7 +17,7 @@ export function getConfig() {
     transports: {
       [mainnet.id]: http(),
       [sepolia.id]: http(),
-      [anvil.id]: http(),
+      [anvil.id]: http(`http://127.0.0.1:8545`),
     },
   })
 }
