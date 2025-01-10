@@ -18,7 +18,7 @@ A user can connect their wallet to the frontend and increment the counter. The f
 
 Clone and spin up the Cartesi Coprocessor repository:
 ```
-git clone https://github.com/cartesi/cartesi-coprocessor.git
+git clone https://github.com/zippiehq/cartesi-coprocessor
 
 cd cartesi-coprocessor
 
