@@ -1,8 +1,6 @@
 const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
 console.log("HTTP rollup_server url is " + rollup_server);
 
-let counter = 0;
-
 async function emit_notice(data) {
   try {
     const notice_payload = { payload: data.payload };
@@ -14,7 +12,7 @@ async function emit_notice(data) {
       body: JSON.stringify(notice_payload),
     });
 
-    if (response.status === 200) {
+    if (response.status === 201) {
       console.log("Notice emitted successfully with data:", data);
     } else {
       console.error(`Failed to emit notice with data: ${JSON.stringify(data)}. Status code: ${response.status}`);
@@ -34,18 +32,18 @@ async function handle_advance(data) {
     const payload = JSON.parse(payloadStr);
     console.log("Payload:", payload);
 
-    // Check if the method is increment
-    if (payload.method === "increment") {
-      counter++;
-      console.log(`Counter incremented to: ${counter}`);
+    // Check if the method is increment and counter value exists
+    if (payload.method === "increment" && 'counter' in payload) {
+      const newCounter = payload.counter + 1;
+      console.log(`Counter incremented to: ${newCounter}`);
       
-      // Emit notice with the updated counter value
-      const counterHex = '0x' + Buffer.from(JSON.stringify({ counter })).toString('hex');
+      // Hex encode the counter value and pad to 32 bytes
+      const counterHex = '0x' + newCounter.toString(16).padStart(64, '0');  
       await emit_notice({ payload: counterHex });
-      
       return "accept";
+      
     } else {
-      console.log("Invalid method");
+      console.log("Invalid method or missing counter value");
       return "reject";
     }
   } catch (error) {
