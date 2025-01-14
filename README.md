@@ -9,7 +9,7 @@ A user can connect their wallet to the frontend and increment the counter. The f
 ## Project Structure
 
 - `backend-cartesi-counter/` - Counter dApp implementation in JavaScript
-- `contracts/` - Smart contract for issuing task to the co-processor
+- `contracts/` - Smart contract with custom logic and issuing task to the co-processor
 - `ui-coprocessor-template/` - Frontend React application
 
 ## Setup Instructions
@@ -17,7 +17,7 @@ A user can connect their wallet to the frontend and increment the counter. The f
 ### 1. Run Cartesi-Coprocessor devnet env
 
 Clone and spin up the Cartesi Coprocessor repository:
-```
+```shell
 git clone https://github.com/zippiehq/cartesi-coprocessor
 
 cd cartesi-coprocessor
@@ -28,7 +28,7 @@ docker compose -f docker-compose-devnet.yaml up --wait -d
 ```
 
 To turn down the environment, run:
-```
+```shell
 docker compose -f docker-compose-devnet.yaml down -v
 ```
 
@@ -39,11 +39,23 @@ Navigate to the backend folder and follow steps in the [README](./backend-cartes
 
 ### 3. Deploy CounterCaller Smart Contract
 
-- Initiate a Foundry project with base contract [CoprocessorAdapter](https://github.com/Mugen-Builders/coprocessor-base-contract).
-- Wrap the base contract with a CounterCaller implmentation from [contracts](./contracts) folder. 
-- Deploy CounterCaller contract to the devnet.
 
-NOTE: You'll need the machine hash output and co-processor proxy address(task_issuer) for the smart contract deployment. Navigate to `config-devnet.toml` file inside Cartesi-Coprocessor repo to find `task_issuer` address. 
+- To deploy the contract, cd into the `contracts` folder and run the following command:
+
+```shell
+$ forge create --broadcast \
+    --rpc-url <your_rpc_url> \
+    --private-key <your_private_key> \
+    ./src/CounterCaller.sol:CounterCaller \
+    --constructor-args <coprocessor_address> <machine_hash>
+```
+
+Example values for local development:
+- RPC URL: http://127.0.0.1:8545
+- Coprocessor Address: It's the `task_issuer` that you can get from [config-devnet.toml](https://github.com/zippiehq/cartesi-coprocessor/blob/dbcc51edb7c8edf0ff1d385ed3f36c5f73230ec5/config-devnet.toml#L8)
+- Machine Hash: Get from cartesi-backend deployment output
+
+NOTE: Copy the deployed contract address you get from above command and save it for later use in the frontend interaction.
 
 ### 4. Run Frontend Application
 
