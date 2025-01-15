@@ -14,11 +14,8 @@ contract CounterCaller is CoprocessorAdapter {
     }
 
     function handleNotice(bytes memory notice) internal override {
-        uint256 value;
-        assembly {
-            value := mload(add(notice, 32))
-        }
-        count = value;
+        require(notice.length >= 32, "Invalid notice length");
+        count = abi.decode(notice, (uint256));
         emit ResultReceived(notice);
     }
 
