@@ -19,14 +19,18 @@ A data flow diagram is provided below to help you understand the flow of data be
 
 ### 1. Run Cartesi-Coprocessor devnet environment
 
-Clone and spin up the Cartesi Coprocessor repository:
+Clone and navigate to the repository:
 ```shell
-git clone https://github.com/zippiehq/cartesi-coprocessor
+git clone https://github.com/zippiehq/cartesi-coprocessor && cd cartesi-coprocessor
+```
 
-cd cartesi-coprocessor
-
+Initialize all submodules:
+```shell
 git submodule update --init --recursive
+```
 
+Start the devnet environment in detached mode:
+```shell
 docker compose -f docker-compose-devnet.yaml up --wait -d
 ```
 
