@@ -3,18 +3,21 @@
 This is an end-to-end template that demonstrates a simple counter running on Cartesi co-processor's infrastructure.
 
 ## How does it work?
-A user can connect their wallet to the frontend and increment the counter. The frontend will send a transaction to the caller contract, which will then call the co-processor to increment the counter. The co-processor will then return the result to the frontend, which will be reflected in the UI.
-[#TODO - ADD IMAGE]
+A user can connect their wallet to the frontend and increment the counter. The frontend will send a transaction to the caller contract, which will then call the co-processor to increment the counter. The co-processor will then return the result to the on-chain contract, which will be reflected on the UI.
+
+A data flow diagram is provided below to help you understand the flow of data between the frontend, the on-chain contract, and the co-processor.
+
+![Counter Data Flow Diagram](./counter-dfd.jpg)
 
 ## Project Structure
 
-- `backend-cartesi-counter/` - Counter dApp implementation in JavaScript
-- `contracts/` - Smart contract with custom logic and issuing task to the co-processor
-- `ui-coprocessor-template/` - Frontend React application
+- `backend-cartesi-counter/` - Counter dApp backend implementation in JavaScript.
+- `contracts/` - Smart contract with custom dApp logic and function to issue task to the co-processor.
+- `ui-coprocessor-template/` - Frontend React application for reading the counter value and incrementing it.
 
 ## Setup Instructions
 
-### 1. Run Cartesi-Coprocessor devnet env
+### 1. Run Cartesi-Coprocessor devnet environment
 
 Clone and spin up the Cartesi Coprocessor repository:
 ```shell
@@ -35,12 +38,12 @@ docker compose -f docker-compose-devnet.yaml down -v
 
 ### 2. Build and Deploy Backend Cartesi Machine
 
-Navigate to the backend folder and follow steps in the [README](./backend-cartesi-counter/README.md).
+Navigate to the backend folder and follow steps in the backend [README](./backend-cartesi-counter/README.md).
 
 ### 3. Deploy CounterCaller Smart Contract
 
 
-- To deploy the contract, cd into the `contracts` folder and run the following command:
+To deploy the contract, cd into the `contracts` folder and run the following command:
 
 ```shell
 $ forge create --broadcast \
