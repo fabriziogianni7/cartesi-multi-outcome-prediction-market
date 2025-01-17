@@ -1,10 +1,10 @@
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
-import { mainnet, sepolia, anvil } from 'wagmi/chains'
+import { holesky, anvil } from 'wagmi/chains'
 import { coinbaseWallet, injected, walletConnect } from 'wagmi/connectors'
 
 export function getConfig() {
   return createConfig({
-    chains: [mainnet, sepolia, anvil],
+    chains: [holesky, anvil],
     connectors: [
       injected(),
       coinbaseWallet(),
@@ -13,11 +13,11 @@ export function getConfig() {
     storage: createStorage({
       storage: cookieStorage,
     }),
+    syncConnectedChain: true, 
     ssr: true,
     transports: {
-      [mainnet.id]: http(),
-      [sepolia.id]: http(),
-      [anvil.id]: http(`http://127.0.0.1:8545`),
+      [holesky.id]: http('https://ethereum-holesky-rpc.publicnode.com'),
+      [anvil.id]: http('http://127.0.0.1:8545'),
     },
   })
 }

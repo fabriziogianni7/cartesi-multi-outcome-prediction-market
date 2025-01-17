@@ -2,7 +2,7 @@
 
 import { useAccount, useConnect, useDisconnect, useWriteContract, useWaitForTransactionReceipt, useWatchContractEvent, useReadContract } from 'wagmi'
 import { useState, useEffect } from 'react'
-import { anvil } from 'wagmi/chains'
+import { holesky, anvil } from 'wagmi/chains'
 import { counterCallerABI } from '../contracts/CounterCallerABI'
 
 const COPROCESSOR_CALLER_ADDRESS = process.env.NEXT_PUBLIC_COPROCESSOR_CALLER_ADDRESS
@@ -59,7 +59,7 @@ function App() {
     },
     poll: true,
     pollingInterval: 1000,
-    chainId: anvil.id,
+    chainId: holesky.id,
   })
 
   const handleIncrement = async () => {
@@ -69,7 +69,11 @@ function App() {
       return
     }
 
-    await refreshCounter()
+    try {
+      await refreshCounter()
+    } catch (error) {
+      console.error('Failed to refresh counter:', error)
+    }
 
     const jsonInput = {
       method: "increment",
