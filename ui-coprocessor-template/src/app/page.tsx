@@ -192,6 +192,13 @@ function App() {
         )}
         {isError && <div>Error: {writeError?.message}</div>}
       </div>
+
+      {/* Component: Faucet link */}
+      <div>
+        <p> 
+          Get testnet eth from <a href="https://cloud.google.com/application/web3/faucet/ethereum/holesky">Holesky Faucet</a>
+        </p>
+      </div>
     </div>
   )
 }
