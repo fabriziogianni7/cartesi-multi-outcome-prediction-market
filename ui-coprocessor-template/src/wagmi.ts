@@ -18,8 +18,8 @@ export function getConfig() {
     syncConnectedChain: true, 
     ssr: true,
     transports: {
-      [holesky.id]: http('https://ethereum-holesky-rpc.publicnode.com'),
-      [anvil.id]: http('http://127.0.0.1:8545'),
+      [holesky.id]: http(),
+      [anvil.id]: http(),
     },
   })
 }

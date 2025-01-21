@@ -1,6 +1,6 @@
 import { defineConfig, loadEnv } from '@wagmi/cli'
 import { react } from '@wagmi/cli/plugins'
-import { counterCallerABI } from './src/contracts/CounterCallerABI'
+import { counterCallerABI } from './src/contracts-abi/CounterCallerABI'
 
 export default defineConfig(() => {
 

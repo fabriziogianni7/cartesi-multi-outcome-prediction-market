@@ -1,97 +1,134 @@
 'use client'
 
-import { useAccount, useConnect, useDisconnect, useWriteContract, useWaitForTransactionReceipt, useWatchContractEvent, useReadContract } from 'wagmi'
+import { useAccount, useConnect, useDisconnect, useWriteContract, useWaitForTransactionReceipt, useReadContract, useBlockNumber } from 'wagmi'
 import { useState, useEffect } from 'react'
-import { holesky, anvil } from 'wagmi/chains'
-import { counterCallerABI } from '../contracts/CounterCallerABI'
+import { counterCallerABI } from '../contracts-abi/CounterCallerABI'
 
 const COPROCESSOR_CALLER_ADDRESS = process.env.NEXT_PUBLIC_COPROCESSOR_CALLER_ADDRESS
 
-type Event = {
-  newCount: number;
-  timestamp: number;
-  txHash: string;
-  type: 'counter' | 'result';
-  output?: string;
-}
-
 function App() {
+  // Set variables to manage the account
   const account = useAccount()
   const { connectors, connect, status, error } = useConnect()
   const { disconnect } = useDisconnect()
-  const { data: generatedHash, error: writeError, isPending, isError, writeContract  } = useWriteContract()
-  const [waitingForEvent, setWaitingForEvent] = useState(false);
-  const receipt = useWaitForTransactionReceipt({ hash: generatedHash });
 
-  useEffect(() => {
-    if (receipt.isSuccess) {
-      setWaitingForEvent(true);
-    }
-  }, [receipt.isSuccess]);
+  // Set variable to subscribe to the block number
+  const { data: blockNumber } = useBlockNumber({ watch: true })
 
-  const [events, setEvents] = useState<Event[]>([])
+  // State variables to track the transaction and result
+  const [txBlockNumber, setTxBlockNumber] = useState<number | null>(null)
+  const [blocksWatched, setBlocksWatched] = useState(0)
+  const [waitingForResult, setWaitingForResult] = useState(false)
+  const [processedTxHash, setProcessedTxHash] = useState<string | null>(null);
+  const [previousCounterValue, setPreviousCounterValue] = useState<bigint | null>(null)
 
+  // Hook to read the counter value from the contract
   const { data: counterValue, refetch: refreshCounter, isLoading } = useReadContract({
     address: COPROCESSOR_CALLER_ADDRESS as `0x${string}`,
     abi: counterCallerABI,
     functionName: 'get',
   })
 
-  useWatchContractEvent({
-    address: COPROCESSOR_CALLER_ADDRESS as `0x${string}`,
-    abi: counterCallerABI,
-    eventName: 'ResultReceived',
-    onLogs: async (logs) => {
-      logs.forEach(log => {
-        const output = log.args.output as `0x${string}`;
-        const outputValue = parseInt(output, 16);
-        const newEvent: Event = {
-          type: 'result',
-          timestamp: Date.now(),
-          txHash: log.transactionHash,
-          newCount: 0,
-          output: outputValue.toString()
-        }
-        setEvents(prev => [...prev, newEvent])
-      })
-      await refreshCounter()
-      setWaitingForEvent(false);
-    },
-    poll: true,
-    pollingInterval: 1000,
-    chainId: holesky.id,
-  })
+  // Hooks to write the contract call and wait for the transaction receipt
+  const { data: generatedHash, error: writeError, isPending, isError, writeContract  } = useWriteContract()
+  const receipt = useWaitForTransactionReceipt({ hash: generatedHash });
+
+  // Function to reset the states
+  const resetStates = () => {
+    setTxBlockNumber(null);
+    setBlocksWatched(0);
+    setWaitingForResult(false);
+    setProcessedTxHash(receipt.data?.transactionHash || null);
+  };
+
+  // Start watching the blocks for coprocessor result
+  useEffect(() => {
+    // Only wait for result if we have a new successful tx receipt
+    if (receipt.isSuccess && !waitingForResult && receipt.data?.transactionHash !== processedTxHash) {
+      setWaitingForResult(true);
+    }
+
+    // Set state variables when we're waiting for a result
+    if (receipt.isSuccess && blockNumber && !txBlockNumber && waitingForResult) {
+      setTxBlockNumber(Number(receipt.data.blockNumber));
+      setBlocksWatched(0);
+      setPreviousCounterValue(counterValue ?? null);
+    }
+
+    if (txBlockNumber && blockNumber && waitingForResult) {
+      const blocksSinceTx = Number(blockNumber) - txBlockNumber;
+      setBlocksWatched(blocksSinceTx);
+
+      if (counterValue !== previousCounterValue) {
+        console.log('Counter changed, resetting states');
+        resetStates();
+        return;
+      }
+
+      // Keep a 5 blocks timeout to wait for the result
+      if (blocksSinceTx <= 5) {
+        refreshCounter().then(() => {
+          if (counterValue !== previousCounterValue) {
+            console.log('Counter changed after refresh, resetting states');
+            resetStates();
+            return;
+          }
+        });
+      } else {
+        console.log('Reached max blocks, resetting states');
+        resetStates();
+        return;
+      }
+    }
+  }, [blockNumber, receipt.isSuccess, receipt.data?.blockNumber, receipt.data?.transactionHash, counterValue, waitingForResult]);
+
 
   const handleIncrement = async () => {
-    
+    // Validate configuration
     if (!COPROCESSOR_CALLER_ADDRESS) {
       console.error('Coprocessor caller address not configured')
       return
     }
 
     try {
+      // Get latest counter value before proceeding
       await refreshCounter()
+      
+      // Prepare hex format input payload
+      const payload = {
+        method: "increment",
+        counter: Number(counterValue || 0)
+      }
+      const encodedPayload = Buffer.from(JSON.stringify(payload)).toString('hex')
+      const inputData = `0x${encodedPayload}` as `0x${string}`
+      
+      // Execute contract call
+      writeContract({
+        address: COPROCESSOR_CALLER_ADDRESS as `0x${string}`,
+        abi: counterCallerABI,
+        functionName: 'runExecution',
+        args: [inputData]
+      })
     } catch (error) {
-      console.error('Failed to refresh counter:', error)
+      console.error('Failed to increment:', error)
+      setWaitingForResult(false);
     }
-
-    const jsonInput = {
-      method: "increment",
-      counter: Number(counterValue || 0)
-    }
-
-    const inputData = '0x' + Buffer.from(JSON.stringify(jsonInput)).toString('hex')
-    
-    writeContract({
-      address: COPROCESSOR_CALLER_ADDRESS as `0x${string}`,
-      abi: counterCallerABI,
-      functionName: 'runExecution',
-      args: [inputData as `0x${string}`]
-    })
   }
 
+  // Handle state transition messages
+  const getWaitingMessage = () => {
+    if (isPending) return 'Waiting for wallet...';
+    if (receipt.isLoading) return 'Processing transaction...';
+    if (waitingForResult) {
+      if (blocksWatched > 0) return `Waiting for result... (${blocksWatched}/5 blocks)`;
+      return 'Waiting for result...';
+    }
+    return 'Increment';
+  };
+
   return (
-    <>
+    <div>
+      {/* Component: Connected Accounts */}
       <div>
         <div>
           account status: {account.status}
@@ -108,6 +145,7 @@ function App() {
         )}
       </div>
 
+      {/* Component: Wallet Connectors */}
       <div>
         <h2>Connect wallet</h2>
         {connectors.map((connector) => (
@@ -123,8 +161,9 @@ function App() {
         <div>{error?.message}</div>
       </div>
 
+      {/* Component: Counter */}
       <div>
-        <h2>Counter: {isLoading ? 'Loading...' : (counterValue ? Number(counterValue) : '-')}</h2>
+        <h1>Counter: {isLoading ? 'Loading...' : (counterValue ? Number(counterValue) : '-')}</h1>
         <button onClick={async () => {
           await refreshCounter()
         }}>
@@ -132,20 +171,18 @@ function App() {
         </button>
         <button 
           type="button" 
-          onClick={handleIncrement}
-          disabled={isPending || receipt.isLoading || waitingForEvent}
+            onClick={handleIncrement}
+          disabled={isPending || receipt.isLoading || waitingForResult}
         >
-          {isPending ? 'Waiting for wallet...' : 
-           receipt.isLoading ? 'Processing transaction...' : 
-           waitingForEvent ? 'Waiting for result...' :
-           'Increment'}
+          {getWaitingMessage()}
         </button>
       </div>
 
+      {/* Component: Transaction Result */}
       <div>
         {receipt.isSuccess && (
           <div>
-            <strong>Transaction confirmed! {waitingForEvent ? 'Waiting for result...' : 'Counter incremented 🎉'}</strong> 
+            <strong>Transaction confirmed! {waitingForResult ? 'Waiting for result from Coprocessor...' : 'Counter incremented successfully 🎉'}</strong> 
             <br />
             transaction hash: {receipt.data.transactionHash}
             <br />
@@ -155,36 +192,7 @@ function App() {
         )}
         {isError && <div>Error: {writeError?.message}</div>}
       </div>
-
-      <div>
-        <h2>Emitted Events</h2>
-        {events.filter(e => e.type === 'result').length === 0 ? (
-          <p>No events yet</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Output</th>
-                <th>Time</th>
-                <th>Transaction Hash</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...events]
-                .filter(e => e.type === 'result')
-                .reverse()
-                .map((event, index) => (
-                  <tr key={`${event.txHash}-${index}`}>
-                    <td>{event.output}</td>
-                    <td>{new Date(event.timestamp).toLocaleString()}</td>
-                    <td>{event.txHash}</td>
-                  </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </>
+    </div>
   )
 }
 
