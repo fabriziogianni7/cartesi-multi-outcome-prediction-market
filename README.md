@@ -1,6 +1,8 @@
-# Simple Counter Template[JS/TS] - Cartesi Coprocessor 
+# Simple Counter Template - Cartesi Coprocessor 
 
-This is an end-to-end template that demonstrates a simple counter running on Cartesi co-processor's infrastructure.
+This repo contains an end-to-end template that demonstrates a simple counter running on Cartesi Co-processor's stack. The backend of the Coprocessor dApp is implemented in 4 different languages: [JavaScript](./backend-cartesi-counter-js/), [Python](./backend-cartesi-counter-py/), [Rust](./backend-cartesi-counter-rs/), and [Go](./backend-cartesi-counter-go/). You can pick any language and extend the template to your own Coprocessor logic.
+
+The UI template is implemented with [React](./ui-coprocessor-template/) and [Wagmi](https://wagmi.sh/) starter kit.
 
 ## How does it work?
 A user can connect their wallet to the frontend and increment the counter. The frontend will send a transaction to the caller contract, which will then call the co-processor to increment the counter. The co-processor will then return the result to the on-chain contract, which will be reflected on the UI.
@@ -11,13 +13,18 @@ A data flow diagram is provided below to help you understand the flow of data be
 
 ## Project Structure
 
-- `backend-cartesi-counter/` - Counter dApp backend implementation in JavaScript.
+- `backend-cartesi-counter-js/` - Backend implementation in JavaScript.
+- `backend-cartesi-counter-py/` - Backend implementation in Python.
+- `backend-cartesi-counter-rs/` - Backend implementation in Rust.
+- `backend-cartesi-counter-go/` - Backend implementation in Go.
 - `contracts/` - Smart contract with custom dApp logic and function to issue task to the co-processor.
 - `ui-coprocessor-template/` - Frontend React application for reading the counter value and incrementing it.
 
-## Setup Instructions
+## Setup Instructions for Devnet
 
 ### 1. Run Cartesi-Coprocessor devnet environment
+
+Before running the dApp, you need to have the Coprocessor devnet environment running. It will spin up a local operator in devnet mode that will host the dApp backend.
 
 Clone and navigate to the repository:
 ```shell
@@ -29,12 +36,12 @@ Initialize all submodules:
 git submodule update --init --recursive
 ```
 
-Start the devnet environment in detached mode:
+Start the devnet environment:
 ```shell
 docker compose -f docker-compose-devnet.yaml up --wait -d
 ```
 
-To turn down the environment, run:
+To turn down the environment later, run:
 ```shell
 docker compose -f docker-compose-devnet.yaml down -v
 ```
@@ -42,7 +49,7 @@ docker compose -f docker-compose-devnet.yaml down -v
 
 ### 2. Build and Deploy Backend Cartesi Machine
 
-Navigate to the backend folder and follow steps in the backend [README](./backend-cartesi-counter/README.md).
+Navigate to the desired backend folder and follow steps in the dedicated README files [Python](./backend-cartesi-counter-py/README.md), [JavaScript](./backend-cartesi-counter-js/README.md), [Rust](./backend-cartesi-counter-rs/README.md), and [Go](./backend-cartesi-counter-go/README.md).
 
 ### 3. Deploy CounterCaller Smart Contract
 
@@ -70,13 +77,6 @@ Navigate to the frontend folder and follow steps in the [README](./ui-coprocesso
 
 The frontend will be available at http://localhost:3000
 
-
-
-## Usage
-
-1. Connect your wallet to the local network (chain ID: 31337)
-2. Use the UI to increment the counter
-3. Transactions will be processed by the Cartesi machine and results reflected in the UI
 
 ## License
 
