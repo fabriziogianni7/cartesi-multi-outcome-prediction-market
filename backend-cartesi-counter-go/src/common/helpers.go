@@ -29,15 +29,6 @@ func SendFinish(finish *FinishRequest) (*http.Response, error) {
   return SendPost("finish", body)
 }
 
-func SendReport(report *ReportRequest) (*http.Response, error) {
-  body, err := json.Marshal(report)
-  if err != nil {
-    return &http.Response{}, err
-  }
-  
-  return SendPost("report", body)
-}
-
 func SendNotice(notice *NoticeRequest) (*http.Response, error) {
   body, err := json.Marshal(notice)
   if err != nil {
@@ -45,15 +36,6 @@ func SendNotice(notice *NoticeRequest) (*http.Response, error) {
   }
   
   return SendPost("notice", body)
-}
-
-func SendVoucher(voucher *VoucherRequest) (*http.Response, error) {
-  body, err := json.Marshal(voucher)
-  if err != nil {
-    return &http.Response{}, err
-  }
-  
-  return SendPost("voucher", body)
 }
 
 func SendException(exception *ExceptionRequest) (*http.Response, error) {

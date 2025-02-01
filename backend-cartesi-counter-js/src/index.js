@@ -52,14 +52,8 @@ async function handle_advance(data) {
   }
 }
 
-async function handle_inspect(data) {
-  console.log("Received inspect request data " + JSON.stringify(data));
-  return "accept";
-}
-
 var handlers = {
   advance_state: handle_advance,
-  inspect_state: handle_inspect,
 };
 
 var finish = { status: "accept" };
