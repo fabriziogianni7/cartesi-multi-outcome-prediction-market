@@ -12,7 +12,7 @@ async function emit_notice(data) {
       body: JSON.stringify(notice_payload),
     });
 
-    if (response.status === 201) {
+    if (response.status === 201 || response.status === 200) {
       console.log("Notice emitted successfully with data:", data);
     } else {
       console.error(`Failed to emit notice with data: ${JSON.stringify(data)}. Status code: ${response.status}`);
