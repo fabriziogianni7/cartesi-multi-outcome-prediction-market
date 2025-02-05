@@ -45,19 +45,6 @@ pub async fn handle_advance(
     }
 }
 
-pub async fn handle_inspect(
-    _client: &hyper::Client<hyper::client::HttpConnector>,
-    _server_addr: &str,
-    request: JsonValue,
-) -> Result<&'static str, Box<dyn std::error::Error>> {
-    println!("Received inspect request data {}", &request);
-    let _payload = request["data"]["payload"]
-        .as_str()
-        .ok_or("Missing payload")?;
-    // TODO: add application logic here
-    Ok("accept")
-}
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = hyper::Client::new();
@@ -87,7 +74,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .ok_or("request_type is not a string")?;
             status = match request_type {
                 "advance_state" => handle_advance(&client, &server_addr[..], req).await?,
-                "inspect_state" => handle_inspect(&client, &server_addr[..], req).await?,
                 &_ => {
                     eprintln!("Unknown request type");
                     "reject"

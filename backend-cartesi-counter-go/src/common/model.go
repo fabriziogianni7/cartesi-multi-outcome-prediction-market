@@ -30,16 +30,7 @@ type Metadata struct {
   Timestamp uint64      `json:"timestamp"`
 }
 
-type ReportRequest struct {
-  Payload string        `json:"payload"`
-}
-
 type NoticeRequest struct {
-  Payload string        `json:"payload"`
-}
-
-type VoucherRequest struct {
-  Destination string    `json:"destination"`
   Payload string        `json:"payload"`
 }
 

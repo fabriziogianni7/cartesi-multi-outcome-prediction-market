@@ -12,7 +12,7 @@ logger.info(f"HTTP rollup_server url is {rollup_server}")
 def emit_notice(data):
     notice_payload = {"payload": data["payload"]}
     response = requests.post(rollup_server + "/notice", json=notice_payload)
-    if response.status_code == 201:
+    if response.status_code == 200 or response.status_code == 201:
         logger.info(f"Notice emitted successfully with data: {data}")
     else:
         logger.error(f"Failed to emit notice with data: {data}. Status code: {response.status_code}")
@@ -44,16 +44,8 @@ def handle_advance(data):
         print(f"Error processing payload: {error}")
         return "reject"
 
-
-def handle_inspect(data):
-    logger.info(f"Received inspect request data {data}")
-    emit_notice(data)
-    return "accept"
-
-
 handlers = {
     "advance_state": handle_advance,
-    "inspect_state": handle_inspect,
 }
 
 finish = {"status": "accept"}
