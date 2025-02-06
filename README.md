@@ -22,61 +22,61 @@ A data flow diagram is provided below to help you understand the flow of data be
 
 ## Setup Instructions for Devnet
 
-### 1. Run Cartesi-Coprocessor devnet environment
+Below steps will assume that you've cloned this repo to your local machine and you already have Docker Desktop, Cartesi CLI and Foundry installed.
+
+### 1. Install `cartesi-coprocessor` CLI
+
+cartesi-coprocessor CLI will help us build, publish, deploy and run local environment with ease.
+```shell
+cargo install cartesi-coprocessor
+```
+
+### 2. Run the Coprocessor devnet environment
 
 Before running the dApp, you need to have the Coprocessor devnet environment running. It will spin up a local operator in devnet mode that will host the dApp backend.
 
-Clone and navigate to the repository:
-```shell
-git clone https://github.com/zippiehq/cartesi-coprocessor && cd cartesi-coprocessor
-```
 
-Initialize all submodules:
+On your terminal, start the devnet environment:
 ```shell
-git submodule update --init --recursive
+cartesi-coprocessor start-devnet
 ```
-
-Start the devnet environment:
-```shell
-docker compose -f docker-compose-devnet.yaml up --wait -d
-```
+You can open Docker Desktop to see the running containers and corresponding logs. DApp logs are visible in the `cartesi-coprocessor-operator` container.
 
 To turn down the environment later, run:
 ```shell
-docker compose -f docker-compose-devnet.yaml down -v
+cartesi-coprocessor stop-devnet
 ```
 
+### 3. Build and Publish Backend Cartesi Machine
 
-### 2. Build and Deploy Backend Cartesi Machine
+Open another terminal tab and `cd` into the desired backend folder [Python](./backend-cartesi-counter-py/), [JavaScript](./backend-cartesi-counter-js/), [Rust](./backend-cartesi-counter-rs/), and [Go](./backend-cartesi-counter-go/).
 
-Navigate to the desired backend folder and follow steps in the dedicated README files [Python](./backend-cartesi-counter-py/README.md), [JavaScript](./backend-cartesi-counter-js/README.md), [Rust](./backend-cartesi-counter-rs/README.md), and [Go](./backend-cartesi-counter-go/README.md).
+Run the publish command for devnet:
+```shell
+cartesi-coprocessor publish --network devnet
+```
 
-### 3. Deploy CounterCaller Smart Contract
+At this point, you should see the `machine hash` by running:
+```shell
+cartesi-coprocessor address-book
+```
 
+### 4. Deploy `CounterCaller` Smart Contract
 
-To deploy the contract, cd into the `contracts` folder and run the following command:
+To deploy the contract, `cd` into the `contracts` folder and run the following command:
 
 ```shell
-$ forge create --broadcast \
-    --rpc-url <your_rpc_url> \
-    --private-key <your_private_key> \
-    ./src/CounterCaller.sol:CounterCaller \
-    --constructor-args <coprocessor_address> <machine_hash>
+cartesi-coprocessor deploy --contract-name CounterCaller --network devnet --constructor-args <task_issuer_address> <machine_hash>
 ```
+**NOTE:** You can get the `task_issuer_address` and `machine_hash` from the `address-book` command as shown in the previous step.
 
-Example values for local development:
-- RPC URL: http://127.0.0.1:8545
-- Coprocessor Address: It's the `task_issuer` that you can get from [config-devnet.toml](https://github.com/zippiehq/cartesi-coprocessor/blob/dbcc51edb7c8edf0ff1d385ed3f36c5f73230ec5/config-devnet.toml#L8)
-- Machine Hash: Get from cartesi-backend deployment output
+Copy the deployed contract address you get from above command and save it for later use in the frontend interaction.
 
-NOTE: Copy the deployed contract address you get from above command and save it for later use in the frontend interaction.
-
-### 4. Run Frontend Application
+### 5. Run Frontend Application
 
 Navigate to the frontend folder and follow steps in the [README](./ui-coprocessor-template/README.md)
 
 The frontend will be available at http://localhost:3000
-
 
 ## License
 
