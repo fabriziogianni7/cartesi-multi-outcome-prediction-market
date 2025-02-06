@@ -7,7 +7,7 @@ contract CounterCaller is CoprocessorAdapter {
     uint256 public count;
     event ResultReceived(bytes output);
 
-    constructor(address _coprocessorAddress, bytes32 _machineHash) CoprocessorAdapter(_coprocessorAddress, _machineHash) {}
+    constructor(address _taskIssuerAddress, bytes32 _machineHash) CoprocessorAdapter(_taskIssuerAddress, _machineHash) {}
 
     function runExecution(bytes calldata input) external {
         callCoprocessor(input);
