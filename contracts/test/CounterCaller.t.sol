@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-import {Test} from "forge-std/src/Test.sol";
+import {Test} from "forge-std/Test.sol";
 import {CounterCaller} from "../src/CounterCaller.sol";
 
 contract CounterCallerTest is Test {
@@ -47,8 +47,7 @@ contract CounterCallerTest is Test {
 
 // Helper contract to test internal functions
 contract MockCounterCaller is CounterCaller {
-    constructor(address _taskIssuerAddress, bytes32 _machineHash) 
-        CounterCaller(_taskIssuerAddress, _machineHash) {}
+    constructor(address _taskIssuerAddress, bytes32 _machineHash) CounterCaller(_taskIssuerAddress, _machineHash) {}
 
     function exposedHandleNotice(bytes32 inputPayloadHash, bytes memory notice) public {
         handleNotice(inputPayloadHash, notice);
