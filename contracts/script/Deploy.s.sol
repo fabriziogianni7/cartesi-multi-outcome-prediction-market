@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-import {Script} from "../lib/forge-std/src/Script.sol";
+import {Script} from "forge-std/Script.sol";
 import {CounterCaller} from "../src/CounterCaller.sol";
 
 contract DeployCounterCaller is Script {
