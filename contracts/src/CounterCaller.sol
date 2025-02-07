@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-import "../lib/coprocessor-base-contract/src/CoprocessorAdapter.sol";
+import {CoprocessorAdapter} from "coprocessor-base-contract/CoprocessorAdapter.sol";
 
 contract CounterCaller is CoprocessorAdapter {
     uint256 public count;
