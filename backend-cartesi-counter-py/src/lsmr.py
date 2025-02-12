@@ -1,25 +1,25 @@
 import math
 
-def total_price_for_buying_shares(q, b, shares_number):
+def total_price_for_specific_outcome(q, b, outcome_index, nShares):
     """
-    Calculate the total price for buying nShares for each outcome.
+    Calculate the total price for buying nShares of a specific outcome.
     
     Parameters:
     - q: list of quantities for each outcome
     - b: liquidity parameter
-    - nShares: number of shares to buy for each outcome
+    - outcome_index: index of the outcome for which shares are being bought
+    - nShares: number of shares to buy for the specified outcome
     
     Returns:
-    - Total price for buying nShares for each outcome
+    - Total price for buying nShares of the specified outcome
     """
     total_price = 0
     q_temp = q.copy()  # We work on a copy to not modify the original q
     
-    for _ in range(shares_number):  # Loop nShares times
-        for i in range(len(q)):  # For each outcome
-            q_temp[i] += 1  # Increment shares for this outcome
-            price_increase = lmsr_cost(q_temp, b) - lmsr_cost(q_temp.copy(), b)  # Price increase for one more share
-            total_price += price_increase
+    for _ in range(nShares):  # Loop nShares times
+        q_temp[outcome_index] += 1  # Increment shares for the specific outcome
+        price_increase = lmsr_cost(q_temp, b) - lmsr_cost(q_temp.copy(), b)  # Price increase for one more share
+        total_price += price_increase
 
     return total_price
     
