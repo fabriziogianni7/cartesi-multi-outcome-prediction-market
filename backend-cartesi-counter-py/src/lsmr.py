@@ -1,5 +1,29 @@
 import math
 
+def total_price_for_buying_shares(q, b, shares_number):
+    """
+    Calculate the total price for buying nShares for each outcome.
+    
+    Parameters:
+    - q: list of quantities for each outcome
+    - b: liquidity parameter
+    - nShares: number of shares to buy for each outcome
+    
+    Returns:
+    - Total price for buying nShares for each outcome
+    """
+    total_price = 0
+    q_temp = q.copy()  # We work on a copy to not modify the original q
+    
+    for _ in range(shares_number):  # Loop nShares times
+        for i in range(len(q)):  # For each outcome
+            q_temp[i] += 1  # Increment shares for this outcome
+            price_increase = lmsr_cost(q_temp, b) - lmsr_cost(q_temp.copy(), b)  # Price increase for one more share
+            total_price += price_increase
+
+    return total_price
+    
+
 def lmsr_cost(q, b):
         """
         Calculate the cost function for the Logarithmic Market Scoring Rule.
