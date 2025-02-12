@@ -9,9 +9,8 @@ RUN <<EOF
 set -e
 apt-get update
 apt-get install -y --no-install-recommends \
-  busybox-static=1:1.30.1-7ubuntu3
+  busybox-static=1:1.30.1-7ubuntu3 build-essential libssl-dev 
 rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
-useradd --create-home --user-group dapp
 EOF
 
 ARG MACHINE_EMULATOR_TOOLS_VERSION=0.16.1
@@ -28,6 +27,8 @@ RUN <<EOF
 set -e
 pip install -r requirements.txt --no-cache
 find /usr/local/lib -type d -name __pycache__ -exec rm -r {} +
+apt-get remove -y build-essential libssl-dev 
+apt-get autoremove -y
 EOF
 
 COPY ./dapp.py .
