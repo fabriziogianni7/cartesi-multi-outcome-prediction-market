@@ -1,6 +1,6 @@
 import { defineConfig, loadEnv } from '@wagmi/cli'
 import { react } from '@wagmi/cli/plugins'
-import { counterCallerABI } from './src/contracts-abi/CounterCallerABI'
+import { testAbi } from './src/contracts-abi/abis'
 
 export default defineConfig(() => {
 
@@ -13,7 +13,7 @@ export default defineConfig(() => {
       // dev specific config
       out: 'src/generated.ts',
       contracts: [{
-        abi: counterCallerABI,
+        abi: testAbi,
         address: env.NEXT_PUBLIC_COPROCESSOR_CALLER_ADDRESS as `0x${string}`,
         name: 'Counter',
       },],
