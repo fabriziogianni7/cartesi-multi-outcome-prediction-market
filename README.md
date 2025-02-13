@@ -2,7 +2,7 @@
 
 ## Index
 - [Description](#description)
-- [General Architecture](#general-arch)
+- [Architecture](#architecture)
 - [Flow](#flow)
 - [Screenshots](#screenshots)
 - [Install Dependencies](#install-dependencies)
@@ -18,7 +18,7 @@ Ensures Security: With on-chain verification of off-chain results.
 
 This approach makes sophisticated prediction markets accessible, accurate, and versatile, leveraging Cartesi's technology for a better user experience.
 
-## General Arch
+## Architecture
 ![cartesi](https://github.com/user-attachments/assets/809fa84b-2e33-43e9-b95c-419598d7cfbd)
 ## Flow
 ![image](https://github.com/user-attachments/assets/100ad012-4139-4931-924d-14a31692fca8)
