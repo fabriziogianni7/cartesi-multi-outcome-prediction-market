@@ -11,7 +11,7 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-import { Calendar, Home, LucideMessageCircleQuestion, Search, Settings } from "lucide-react"
+import { Calendar, Home, LucideMessageCircleQuestion, Search, DollarSignIcon, DollarSign } from "lucide-react"
 
 
 // Menu items.
@@ -26,28 +26,13 @@ const items = [
         url: "#",
         icon: LucideMessageCircleQuestion,
     },
-    // {
-    //     title: "Calendar",
-    //     url: "#",
-    //     icon: Calendar,
-    // },
-    // {
-    //     title: "Search",
-    //     url: "#",
-    //     icon: Search,
-    // },
-    // {
-    //     title: "Settings",
-    //     url: "#",
-    //     icon: Settings,
-    // },
 ]
 
 export function AppSidebar() {
     return (
         <Sidebar >
             <SidebarHeader>
-                <SidebarGroupLabel>PolyMarktesi</SidebarGroupLabel>
+                <SidebarGroupLabel>Cartesi Polymarket</SidebarGroupLabel>
             </SidebarHeader>
             <SidebarContent>
                 <SidebarGroup>
@@ -64,17 +49,30 @@ export function AppSidebar() {
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}
+                            <SidebarMenuItem>
+                                <SidebarMenuButton asChild>
+                                    <span>
+                                        <DollarSignIcon></DollarSignIcon>
+                                        <a href="https://cloud.google.com/application/web3/faucet/ethereum/holesky" target="_blank" className="text-blue-500 hover:underline">Holesky Faucet</a>
+                                    </span>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
                         </SidebarMenu>
                     </SidebarGroupContent>
+
                 </SidebarGroup>
-            </SidebarContent>
+            </SidebarContent >
             <SidebarFooter>
+                <SidebarGroup>
+                    <SidebarGroupContent>
+                        <p>
+                            Built by <a href="https://github.com/fabriziogianni7" >@Fabriziogianni7</a> and <a href="https://github.com/SolidityDrone" >@SolidityDrone</a>
+                        </p>
+                    </SidebarGroupContent>
+                </SidebarGroup>
                 {/* <SidebarGroupLabel> */}
-                <p>
-                    Built by <a href="https://github.com/fabriziogianni7" >@Fabriziogianni7</a> and <a href="https://github.com/SolidityDrone" >@SolidityDrone</a>
-                </p>
                 {/* </SidebarGroupLabel> */}
             </SidebarFooter>
-        </Sidebar>
+        </Sidebar >
     )
 }

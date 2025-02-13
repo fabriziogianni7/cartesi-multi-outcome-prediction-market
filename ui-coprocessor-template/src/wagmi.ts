@@ -6,16 +6,16 @@ export function getConfig() {
   return createConfig({
     chains: [holesky, anvil],
     connectors: [
-      injected(),
-      coinbaseWallet(),
-      walletConnect({ 
-        projectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID ?? 'default-project-id' 
-      }),
+      // injected(),
+      // coinbaseWallet(),
+      // walletConnect({ 
+      //   projectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID ?? 'default-project-id' 
+      // }),
     ],
     storage: createStorage({
       storage: cookieStorage,
     }),
-    syncConnectedChain: true, 
+    syncConnectedChain: true,
     ssr: true,
     transports: {
       [holesky.id]: http(),
