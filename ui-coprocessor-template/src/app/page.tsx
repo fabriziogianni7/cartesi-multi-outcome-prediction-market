@@ -3,6 +3,8 @@
 import { useAccount, useConnect, useDisconnect, useWriteContract, useWaitForTransactionReceipt, useReadContract, useBlockNumber } from 'wagmi'
 import { useState, useEffect } from 'react'
 import { counterCallerABI } from '../contracts-abi/CounterCallerABI'
+import { Button } from "@/components/ui/button"
+
 
 const COPROCESSOR_CALLER_ADDRESS = process.env.NEXT_PUBLIC_COPROCESSOR_CALLER_ADDRESS
 
@@ -30,7 +32,7 @@ function App() {
   })
 
   // Hooks to write the contract call and wait for the transaction receipt
-  const { data: generatedHash, error: writeError, isPending, isError, writeContract  } = useWriteContract()
+  const { data: generatedHash, error: writeError, isPending, isError, writeContract } = useWriteContract()
   const receipt = useWaitForTransactionReceipt({ hash: generatedHash });
 
   // Function to reset the states
@@ -93,7 +95,7 @@ function App() {
     try {
       // Get latest counter value before proceeding
       await refreshCounter()
-      
+
       // Prepare hex format input payload
       const payload = {
         method: "increment",
@@ -101,7 +103,7 @@ function App() {
       }
       const encodedPayload = Buffer.from(JSON.stringify(payload)).toString('hex')
       const inputData = `0x${encodedPayload}` as `0x${string}`
-      
+
       // Execute contract call
       writeContract({
         address: COPROCESSOR_CALLER_ADDRESS as `0x${string}`,
@@ -128,76 +130,83 @@ function App() {
 
   return (
     <div>
-      {/* Component: Connected Accounts */}
-      <div>
+      <div className="w-[450px]">
+        {/* Component: Connected Accounts */}
         <div>
-          account status: {account.status}
-          <br />
-          addresses: {JSON.stringify(account.addresses)}
-          <br />
-          chainId: {account.chainId}
+          <h1 className="text-3xl font-bold underline">
+            Hello world!
+          </h1>
+          <Button>OK</Button>
+          <div>
+            account status: {account.status}
+            <br />
+            addresses: {JSON.stringify(account.addresses)}
+            <br />
+            chainId: {account.chainId}
+          </div>
+
+          {account.status === 'connected' && (
+            <button type="button" onClick={() => disconnect()}>
+              Disconnect
+            </button>
+          )}
         </div>
 
-        {account.status === 'connected' && (
-          <button type="button" onClick={() => disconnect()}>
-            Disconnect
-          </button>
-        )}
-      </div>
+        {/* Component: Wallet Connectors */}
+        <div>
+          <h2>Connect wallet</h2>
+          {connectors.map((connector) => (
+            <button
+              key={connector.uid}
+              onClick={() => connect({ connector })}
+              type="button"
+            >
+              {connector.name}
+            </button>
+          ))}
+          <div>{status}</div>
+          <div>{error?.message}</div>
+        </div>
 
-      {/* Component: Wallet Connectors */}
-      <div>
-        <h2>Connect wallet</h2>
-        {connectors.map((connector) => (
+        {/* Component: Counter */}
+        <div>
+          <h1>Counter: {isLoading ? 'Loading...' : (counterValue ? Number(counterValue) : '-')}</h1>
+          <button onClick={async () => {
+            await refreshCounter()
+          }}>
+            Refresh
+          </button>
           <button
-            key={connector.uid}
-            onClick={() => connect({ connector })}
             type="button"
-          >
-            {connector.name}
-          </button>
-        ))}
-        <div>{status}</div>
-        <div>{error?.message}</div>
-      </div>
-
-      {/* Component: Counter */}
-      <div>
-        <h1>Counter: {isLoading ? 'Loading...' : (counterValue ? Number(counterValue) : '-')}</h1>
-        <button onClick={async () => {
-          await refreshCounter()
-        }}>
-          Refresh
-        </button>
-        <button 
-          type="button" 
             onClick={handleIncrement}
-          disabled={isPending || receipt.isLoading || waitingForResult}
-        >
-          {getWaitingMessage()}
-        </button>
-      </div>
+            disabled={isPending || receipt.isLoading || waitingForResult}
+          >
+            {getWaitingMessage()}
+          </button>
+        </div>
 
-      {/* Component: Transaction Result */}
-      <div>
-        {receipt.isSuccess && (
-          <div>
-            <strong>Transaction confirmed! {waitingForResult ? 'Waiting for result from Coprocessor...' : 'Counter incremented successfully 🎉'}</strong> 
-            <br />
-            transaction hash: {receipt.data.transactionHash}
-            <br />
-            block number: {receipt.data.blockNumber.toString()}
-            <br />
-          </div>
-        )}
-        {isError && <div>Error: {writeError?.message}</div>}
-      </div>
+        {/* Component: Transaction Result */}
+        <div>
+          {receipt.isSuccess && (
+            <div>
+              <strong>Transaction confirmed! {waitingForResult ? 'Waiting for result from Coprocessor...' : 'Counter incremented successfully 🎉'}</strong>
+              <br />
+              transaction hash: {receipt.data.transactionHash}
+              <br />
+              block number: {receipt.data.blockNumber.toString()}
+              <br />
+            </div>
+          )}
+          {isError && <div>Error: {writeError?.message}</div>}
+        </div>
 
-      {/* Component: Faucet link */}
-      <div>
-        <p> 
-          Get testnet eth from <a href="https://cloud.google.com/application/web3/faucet/ethereum/holesky">Holesky Faucet</a>
-        </p>
+        {/* Component: Faucet link */}
+        <div>
+          <p>
+            Get testnet eth from <a href="https://cloud.google.com/application/web3/faucet/ethereum/holesky">Holesky Faucet</a>
+          </p>
+        </div>
+        {/* <Image src="..." alt="Image" className="rounded-md object-cover" /> */}
       </div>
     </div>
   )

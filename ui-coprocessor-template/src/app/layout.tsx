@@ -1,6 +1,5 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import { headers } from 'next/headers'
 import { type ReactNode } from 'react'
 import { cookieToInitialState } from 'wagmi'
@@ -8,7 +7,10 @@ import { cookieToInitialState } from 'wagmi'
 import { getConfig } from '../wagmi'
 import { Providers } from './providers'
 
-const inter = Inter({ subsets: ['latin'] })
+import { ThemeProvider } from "@/components/theme-provider"
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/app-sidebar"
+
 
 export const metadata: Metadata = {
   title: 'Coprocessor UI template',
@@ -22,8 +24,23 @@ export default function RootLayout(props: { children: ReactNode }) {
   )
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Providers initialState={initialState}>{props.children}</Providers>
+      <body className={`h-screen w-screen m-0 p-0 flex items-center justify-center`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SidebarProvider>
+            <AppSidebar />
+            <main>
+              <Providers initialState={initialState}>
+                <SidebarTrigger />
+                {props.children}
+              </Providers>
+            </main>
+          </SidebarProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
