@@ -1,10 +1,22 @@
 # Cartesi Multi Outcome Prediction Market
 
 ## Index
+- [Description](#description)
 - [General Architecture](#general-arch)
 - [Flow](#flow)
 - [Screenshots](#screenshots)
 - [Install Dependencies](#install-dependencies)
+## Description
+
+This project is a Multi-Outcome Prediction Market entirely on-chain, powered by Cartesi and EigenLayer. 
+
+Calculating share prices for multiple outcomes using the LSMR formula is computationally intensive and costly on the blockchain. Cartesi's Coprocessor offloads these calculations:
+
+Reduces Gas Costs: By handling complex computations off-chain.
+Boosts Scalability: Enhances speed and efficiency of market operations.
+Ensures Security: With on-chain verification of off-chain results.
+
+This approach makes sophisticated prediction markets accessible, accurate, and versatile, leveraging Cartesi's technology for a better user experience.
 
 ## General Arch
 ![cartesi](https://github.com/user-attachments/assets/809fa84b-2e33-43e9-b95c-419598d7cfbd)
