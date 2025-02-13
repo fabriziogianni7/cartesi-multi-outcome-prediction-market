@@ -33,4 +33,11 @@ This approach makes sophisticated prediction markets accessible, accurate, and v
     make install-all
 ```
 
-Built by [@fabriziogianni7](https://github.com/fabriziogianni7) and [@SolidityDrone](https://github.com/SolidityDrone/SolidityDrone)
+&nbsp;
+&nbsp;
+&nbsp;
+
+---
+
+
+<sub>Built by [@fabriziogianni7](https://twitter.com/fabriziogianni7) and [@SolidityDrone](https://twitter.com/SolidityDrone)</sub>
