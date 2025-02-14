@@ -93,3 +93,19 @@ contract MultiOutcomePredictionMarket is CoprocessorAdapter {
         return s_markets[marketId];
     }
 }
+
+/**
+ * TODO
+ * - in runexecution need
+ *      to pass marketId + user address
+ *      give approval for approximate amount for buying shares
+ * - in handle notice:
+ *      keep track of user shares
+ *      increase liquidity of market
+ *      increase number of shares at index
+ *       add a field for probabilities
+ *
+ * - in coprocessor:
+ *         should return decode and return marketId, address,
+ *         shuld return new shares
+ */
