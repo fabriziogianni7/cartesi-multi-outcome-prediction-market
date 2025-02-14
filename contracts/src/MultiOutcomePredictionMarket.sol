@@ -65,8 +65,8 @@ contract MultiOutcomePredictionMarket is CoprocessorAdapter {
     }
 
     function createMarket(string memory _question, uint256 _deadline, string[] memory _outcomesOptions) public {
-        require(s_markets[s_marketId].isResolved == false, "Market already resolved");
-        require(s_markets[s_marketId].deadline > block.timestamp, "Market deadline has passed");
+        require(_outcomesOptions.length > 0, "invalid outcomes options");
+        require(_deadline < block.timestamp, "invalid deadline");
         s_marketId++;
         s_markets[s_marketId] = Market({
             question: _question,
