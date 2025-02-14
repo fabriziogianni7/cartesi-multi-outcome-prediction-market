@@ -1,0 +1,2 @@
+requests == 2.31.0
+eth-abi == 5.2.0

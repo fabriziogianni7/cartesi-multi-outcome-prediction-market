@@ -1,0 +1,5 @@
+pnpm dlx shadcn@canary add button
+
+pnpm dlx shadcn@canary add aspect-ratio
+
+pnpm dlx shadcn@canary add menubar
