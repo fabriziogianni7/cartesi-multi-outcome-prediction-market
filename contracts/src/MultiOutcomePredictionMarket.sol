@@ -18,12 +18,14 @@ contract MultiOutcomePredictionMarket is CoprocessorAdapter {
         uint256 liquidity;
         // uint256 deadline;
         bool isResolved;
+        uint256[] probabilities;
     }
     // the prediction
 
     uint256 public s_marketId;
 
     mapping(uint256 marketId => Market market) public s_markets;
+    mapping(address user => mapping(uint256 marketId => uint256[] ownedShares)) public s_userShares;
 
     event SharesBought(address indexed user, uint256 indexed nOfShares); // needs to be emitted when the user succesfully buy shares
     event ResultReceived(bytes32 indexed inputPayloadHash, bytes output);
@@ -49,7 +51,8 @@ contract MultiOutcomePredictionMarket is CoprocessorAdapter {
     function prepareCallAndRunExecution(uint256 _marketId, uint256 outcomeIndex, uint256 nShares) public {
         uint256[] memory quantities = s_markets[_marketId].circulatingShares;
         uint256 liquidity = s_markets[_marketId].liquidity;
-        bytes memory input = abi.encode(quantities, liquidity, outcomeIndex, nShares);
+
+        bytes memory input = abi.encode(quantities, liquidity, outcomeIndex, nShares, _marketId, msg.sender);
         this.runExecution(input);
     }
 
@@ -67,14 +70,23 @@ contract MultiOutcomePredictionMarket is CoprocessorAdapter {
     ) public {
         // require(s_markets[s_marketId].isResolved == false, "Market already resolved");
         // require(s_markets[s_marketId].deadline > block.timestamp, "Market deadline has passed");
+
         s_marketId++;
+        // probabilities
+        uint256[] memory _probabilities = new uint256[](_outcomes.length);
+        uint256 baseProb = 1e6 / _outcomes.length;
+        for (uint256 i; i < _outcomes.length; i++) {
+            _probabilities[i] = baseProb;
+        }
+
         s_markets[s_marketId] = Market({
             question: _question,
             circulatingShares: _initialShares,
             liquidity: _liquidity,
             // deadline: _deadline,
             isResolved: false,
-            outcomes: _outcomes
+            outcomes: _outcomes,
+            probabilities: _probabilities
         });
 
         emit MarketCreated(s_marketId, _question);
@@ -84,9 +96,28 @@ contract MultiOutcomePredictionMarket is CoprocessorAdapter {
     // a. buy new shares for the user
     // b. update probability (sovrascrivere outcomeArray?)
     function handleNotice(bytes32 inputPayloadHash, bytes memory notice) internal override {
-        // require(notice.length >= 32, "Invalid notice length");
-        // count = abi.decode(notice, (uint256));
-        // emit ResultReceived(inputPayloadHash, notice);
+        require(notice.length >= 32, "Invalid notice length");
+        (
+            uint256[] memory probabilities,
+            uint256 outcome_index,
+            uint256 total_price_for_specific_outcome_converted,
+            uint256 n_shares,
+            uint256 market_id,
+            address user_address
+        ) = abi.decode(notice, (uint256[], uint256, uint256, uint256, uint256, address));
+
+        if (s_userShares[user_address][market_id].length == 0) {
+            s_userShares[user_address][market_id] = new uint256[](probabilities.length);
+        }
+        s_userShares[user_address][market_id][outcome_index] += n_shares; // good luck with it!
+
+        s_markets[market_id].liquidity += total_price_for_specific_outcome_converted;
+        s_markets[market_id].circulatingShares[outcome_index] += n_shares;
+        s_markets[market_id].probabilities = probabilities;
+
+        //todo user should pay here!!
+
+        emit ResultReceived(inputPayloadHash, notice);
     }
 
     function getMarket(uint256 marketId) public view returns (Market memory) {
@@ -97,15 +128,14 @@ contract MultiOutcomePredictionMarket is CoprocessorAdapter {
 /**
  * TODO
  * - in runexecution need
- *      to pass marketId + user address
+ *      to pass marketId + user address OK
  *      give approval for approximate amount for buying shares
  * - in handle notice:
- *      keep track of user shares
- *      increase liquidity of market
- *      increase number of shares at index
- *       add a field for probabilities
- *
+ *      keep track of user shares OK
+ *      increase liquidity of market OK
+ *      increase number of shares at index OK
+ *      add a field for probabilities OK
  * - in coprocessor:
- *         should return decode and return marketId, address,
- *         shuld return new shares
+ *         should return decode and return marketId, address, OK
+ *         shuld return new shares OK
  */

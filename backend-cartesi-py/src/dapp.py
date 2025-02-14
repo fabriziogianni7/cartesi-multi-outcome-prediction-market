@@ -27,11 +27,11 @@ def handle_advance(data):
     print(f'data:', payload_hex)
     
     try:
-        quantities, liquidity, outcome_index, n_shares = util.decode_abi_data(payload_hex)
+        quantities, liquidity, outcome_index, n_shares, market_id, user_address = util.decode_abi_data(payload_hex)
         
         probabilities, total_price_for_specific_outcome = calculate_values(quantities, liquidity, outcome_index, n_shares)
         
-        emit_notice({'payload': util.encode_abi_data(tuple(probabilities),outcome_index,total_price_for_specific_outcome)})
+        emit_notice({'payload': util.encode_abi_data(tuple(probabilities),outcome_index,total_price_for_specific_outcome,n_shares,market_id, user_address)})
         return "accept"
     
     except Exception as error:

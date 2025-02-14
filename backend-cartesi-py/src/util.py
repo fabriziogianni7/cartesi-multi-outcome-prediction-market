@@ -2,9 +2,9 @@
 from eth_abi import encode,decode
 
 
-def encode_abi_data(probabilities, outcome_index, total_price_for_specific_outcome):
+def encode_abi_data(probabilities, outcome_index, total_price_for_specific_outcome, n_shares,marketId, address):
     # Define the types according to the structure of your data
-    types = ['uint256[]', 'uint256', 'uint256']
+    types = ['uint256[]', 'uint256', 'uint256','uint256','uint256','address']
     # Encode the data
     
     print(f'probabilities',probabilities)
@@ -22,13 +22,13 @@ def encode_abi_data(probabilities, outcome_index, total_price_for_specific_outco
     total_price_for_specific_outcome_converted = int(round(total_price_for_specific_outcome * 1e6))
                 
     
-    encoded_data = encode(types, [probabilities_converted, outcome_index, total_price_for_specific_outcome_converted])
+    encoded_data = encode(types, [probabilities_converted, outcome_index, total_price_for_specific_outcome_converted,n_shares,marketId,address])
     # Return the hex string with '0x' prefix for consistency with most blockchain interactions
     return '0x' + encoded_data.hex()
 
 def decode_abi_data(data):
     print(f"into decode_abi_data, data: ",data)
-    types = ['uint256[]', 'uint256', 'uint256', 'uint256']
+    types = ['uint256[]', 'uint256', 'uint256', 'uint256', 'uint256', 'address' ]
     decoded_data = decode(types, bytes.fromhex(data[2:]))
     print(f"decoded_data: ",decoded_data)
     return decoded_data

@@ -2,6 +2,9 @@ cast send <contract_address> "runExecution(bytes)" <hex_encoded_input> \
     --rpc-url <your_rpc_url> \
     --private-key <your_private_key>
 
+cast to-bytes32 "[10,10,10]" 100 1 6 1 0x39806bDCBd704970000Bd6DB4874D6e98cf15123
+
+
 test accounts
 Account #0: 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 (10000 ETH) Private Key: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 Account #1: 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 (10000 ETH) Private Key: 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
