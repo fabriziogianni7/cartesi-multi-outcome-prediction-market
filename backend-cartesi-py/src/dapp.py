@@ -29,23 +29,27 @@ def handle_advance(data):
     try:
         quantities, liquidity, outcome_index, n_shares = util.decode_abi_data(payload_hex)
         
-        q = quantities
-        b = liquidity
-        market_cost = lsmr.lmsr_cost(q, b)
-        one_share_cost = lsmr.lmsr_price(q, b, 0)
-        probabilities = lsmr.lmsr_probability(q, b)
-        total_price_for_specific_outcome = lsmr.total_price_for_specific_outcome(q,b,outcome_index,n_shares)
+        probabilities, total_price_for_specific_outcome = calculate_values(quantities, liquidity, outcome_index, n_shares)
         
-        print(f"Cost of current share distribution: {market_cost}")
-        print(f"Price to buy one more share for outcome 0: {one_share_cost}")
-        print(f"Probabilities",{probabilities})
-        
-        emit_notice({'payload': util.encode_abi_data(probabilities,outcome_index,total_price_for_specific_outcome)})
+        emit_notice({'payload': util.encode_abi_data(tuple(probabilities),outcome_index,total_price_for_specific_outcome)})
         return "accept"
     
     except Exception as error:
         print(f"Error processing payload: {error}")
         return "reject"
+
+def calculate_values(quantities, liquidity, outcome_index, n_shares):
+    q = quantities
+    b = liquidity
+    market_cost = lsmr.lmsr_cost(q, b)
+    one_share_cost = lsmr.lmsr_price(q, b, 0)
+    probabilities = lsmr.lmsr_probability(q, b)
+    total_price_for_specific_outcome = lsmr.total_price_for_specific_outcome(q,b,outcome_index,n_shares)
+        
+    print(f"Cost of current share distribution: {market_cost}")
+    print(f"Price to buy one more share for outcome 0: {one_share_cost}")
+    print(f"Probabilities",{tuple(probabilities)})
+    return probabilities,total_price_for_specific_outcome
 
 handlers = {
     "advance_state": handle_advance,
@@ -64,4 +68,4 @@ while True:
         data = rollup_request["data"]
         handler = handlers[rollup_request["request_type"]]
         finish["status"] = handler(rollup_request["data"])
-        
+      

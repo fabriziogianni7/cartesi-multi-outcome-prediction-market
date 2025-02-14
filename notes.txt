@@ -1,0 +1,34 @@
+cast send <contract_address> "runExecution(bytes)" <hex_encoded_input> \
+    --rpc-url <your_rpc_url> \
+    --private-key <your_private_key>
+
+test accounts
+Account #0: 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 (10000 ETH) Private Key: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+Account #1: 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 (10000 ETH) Private Key: 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
+Account #2: 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc (10000 ETH) Private Key: 0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a
+    
+
+// hard reset and publish
+cartesi-coprocessor stop-devnet && cartesi-coprocessor start-devnet && cartesi-coprocessor publish --network devnet
+
+cartesi-coprocessor publish --network devnet
+cartesi-coprocessor address-book         
+
+Machine Hash         30299e879bc9331db7ab1b0b5d0aa2cf25576681ddae28b648e94118a985f874
+Devnet_task_issuer   0x95401dc811bb5740090279Ba06cfA8fcF6113778
+Testnet_task_issuer  0xff35E413F5e22A9e1Cc02F92dcb78a5076c1aaf3
+payment_token        0xc5a5C42992dECbae36851359345FE25997F5C42d
+
+
+cartesi-coprocessor deploy --contract-name MultiOutcomePredictionMarket --network devnet --constructor-args 0x95401dc811bb5740090279Ba06cfA8fcF6113778 30299e879bc9331db7ab1b0b5d0aa2cf25576681ddae28b648e94118a985f874
+
+Deployed to: 0x922D6956C99E12DFeB3224DEA977D0939758A1Fe
+
+/// create market
+cast send 0x922D6956C99E12DFeB3224DEA977D0939758A1Fe "createMarket(string,uint256[],uint256,string[])" "Who will win the Formula 1 championship?" [10,10,10] 100 '["Lewis Hamilton", "Max Verstappen", "Charles Leclerc"]' --rpc-url http://127.0.0.1:8545 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+
+// invoke coprocessor
+cast send 0x922D6956C99E12DFeB3224DEA977D0939758A1Fe "prepareCallAndRunExecution(uint256,uint256,uint256)" 1 1 6  --rpc-url http://127.0.0.1:8545 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+
+//read market id
+cast call 0x922D6956C99E12DFeB3224DEA977D0939758A1Fe "s_marketId()" --rpc-url http://127.0.0.1:8545 

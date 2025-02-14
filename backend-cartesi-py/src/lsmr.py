@@ -15,7 +15,6 @@ def total_price_for_specific_outcome(q, b, outcome_index, n_shares):
     """
     total_price = 0
     q_temp = list(q)  # Convert tuple to list
-    q_temp = tuple(q_temp)
     
     for _ in range(n_shares):  # Loop nShares times
         q_temp[outcome_index] += 1  # Increment shares for the specific outcome
@@ -51,7 +50,7 @@ def lmsr_price(q, b, outcome_index):
     Returns:
     - Price for an additional share of the specified outcome
     """
-    q_new = q.copy()
+    q_new = list(q)
     q_new[outcome_index] += 1  # Add one share to the specified outcome
     return lmsr_cost(q_new, b) - lmsr_cost(q, b)
 
