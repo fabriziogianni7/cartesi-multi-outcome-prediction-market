@@ -40,7 +40,7 @@ contract MultiOutcomePredictionMarket is CoprocessorAdapter {
 
     struct Request {
         uint marketId;
-        uint deadline;
+        uint deadline;g
         address requester;
         bool isFullfilled;
         bytes inputBytes;
