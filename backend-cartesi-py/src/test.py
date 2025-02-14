@@ -22,4 +22,9 @@ def convert_probabilities(probabilities):
         probabilities_converted.append(solidity_value)
 
 # print(f"result: ",calculate_values((10,10,10),100,0,5))
-print(f"result: ",convert_probabilities( (0.3333333333333333, 0.3333333333333333, 0.3333333333333333)))
+# print(f"result: ",convert_probabilities( (0.3333333333333333, 0.3333333333333333, 0.3333333333333333)))
+
+def test_total_price_for_specific_outcome(q, b, outcome_index, n_shares):
+    print(lsmr.total_price_for_specific_outcome(q, b, outcome_index, n_shares))
+
+test_total_price_for_specific_outcome((10, 10, 10), 100, 1, 6)

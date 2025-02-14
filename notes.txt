@@ -14,21 +14,21 @@ cartesi-coprocessor stop-devnet && cartesi-coprocessor start-devnet && cartesi-c
 cartesi-coprocessor publish --network devnet
 cartesi-coprocessor address-book         
 
-Machine Hash         30299e879bc9331db7ab1b0b5d0aa2cf25576681ddae28b648e94118a985f874
+Machine Hash         abdbf1f03e4bba2b9104c194425df7cda25eda85a42d52007f13fa80dce5031e
 Devnet_task_issuer   0x95401dc811bb5740090279Ba06cfA8fcF6113778
 Testnet_task_issuer  0xff35E413F5e22A9e1Cc02F92dcb78a5076c1aaf3
 payment_token        0xc5a5C42992dECbae36851359345FE25997F5C42d
 
 
-cartesi-coprocessor deploy --contract-name MultiOutcomePredictionMarket --network devnet --constructor-args 0x95401dc811bb5740090279Ba06cfA8fcF6113778 30299e879bc9331db7ab1b0b5d0aa2cf25576681ddae28b648e94118a985f874
+cartesi-coprocessor deploy --contract-name MultiOutcomePredictionMarket --network devnet --constructor-args 0x95401dc811bb5740090279Ba06cfA8fcF6113778 abdbf1f03e4bba2b9104c194425df7cda25eda85a42d52007f13fa80dce5031e
 
-Deployed to: 0x922D6956C99E12DFeB3224DEA977D0939758A1Fe
+Deployed to: 0xdbC43Ba45381e02825b14322cDdd15eC4B3164E6
 
 /// create market
-cast send 0x922D6956C99E12DFeB3224DEA977D0939758A1Fe "createMarket(string,uint256[],uint256,string[])" "Who will win the Formula 1 championship?" [10,10,10] 100 '["Lewis Hamilton", "Max Verstappen", "Charles Leclerc"]' --rpc-url http://127.0.0.1:8545 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send 0xdbC43Ba45381e02825b14322cDdd15eC4B3164E6 "createMarket(string,uint256[],uint256,string[])" "Who will win the Formula 1 championship?" [10,10,10] 100 '["Lewis Hamilton", "Max Verstappen", "Charles Leclerc"]' --rpc-url http://127.0.0.1:8545 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 
 // invoke coprocessor
-cast send 0x922D6956C99E12DFeB3224DEA977D0939758A1Fe "prepareCallAndRunExecution(uint256,uint256,uint256)" 1 1 6  --rpc-url http://127.0.0.1:8545 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send 0xdbC43Ba45381e02825b14322cDdd15eC4B3164E6 "prepareCallAndRunExecution(uint256,uint256,uint256)" 1 1 6  --rpc-url http://127.0.0.1:8545 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 
 //read market id
-cast call 0x922D6956C99E12DFeB3224DEA977D0939758A1Fe "s_marketId()" --rpc-url http://127.0.0.1:8545 
+cast call 0xdbC43Ba45381e02825b14322cDdd15eC4B3164E6 "s_marketId()" --rpc-url http://127.0.0.1:8545 

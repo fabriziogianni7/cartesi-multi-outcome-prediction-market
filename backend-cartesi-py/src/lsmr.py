@@ -2,13 +2,13 @@ import math
 
 def total_price_for_specific_outcome(q, b, outcome_index, n_shares):
     """
-    Calculate the total price for buying nShares of a specific outcome.
+    Calculate the total price for buying n_shares of a specific outcome.
     
     Parameters:
-    - q: list of quantities for each outcome
-    - b: liquidity parameter
-    - outcome_index: index of the outcome for which shares are being bought
-    - nShares: number of shares to buy for the specified outcome
+    - q: list of quantities for each outcome [10,10,10]
+    - b: liquidity parameter [100]
+    - outcome_index: index of the outcome for which shares are being bought 0
+    - n_shares: number of shares to buy for the specified outcome 6
     
     Returns:
     - Total price for buying nShares of the specified outcome
@@ -17,27 +17,14 @@ def total_price_for_specific_outcome(q, b, outcome_index, n_shares):
     q_temp = list(q)  # Convert tuple to list
     
     for _ in range(n_shares):  # Loop nShares times
-        q_temp[outcome_index] += 1  # Increment shares for the specific outcome
-        price_increase = lmsr_cost(q_temp, b) - lmsr_cost(q_temp.copy(), b)  # Price increase for one more share
+        # q_temp[outcome_index] += 1  # Increment shares for the specific outcome
+        
+        price_increase = lmsr_price(q_temp,b,outcome_index)
+        q_temp[outcome_index] += 1
         total_price += price_increase
 
     return total_price
-    
-
-def lmsr_cost(q, b):
-        """
-        Calculate the cost function for the Logarithmic Market Scoring Rule.
-        
-        Parameters:
-        - q: list of quantities for each outcome
-        - b: liquidity parameter
-        
-        Returns:
-        - The cost of the current state of shares
-        """
-        sum_exp = sum(math.exp(qi / b) for qi in q)
-        return b * math.log(sum_exp)
-
+   
 def lmsr_price(q, b, outcome_index):
     """
     Calculate the price for buying one more share of a specific outcome.
@@ -53,6 +40,22 @@ def lmsr_price(q, b, outcome_index):
     q_new = list(q)
     q_new[outcome_index] += 1  # Add one share to the specified outcome
     return lmsr_cost(q_new, b) - lmsr_cost(q, b)
+ 
+
+def lmsr_cost(q, b):
+        """
+        Calculate the cost function for the Logarithmic Market Scoring Rule.
+        
+        Parameters:
+        - q: list of quantities for each outcome
+        - b: liquidity parameter
+        
+        Returns:
+        - The cost of the current state of shares
+        """
+        sum_exp = sum(math.exp(qi / b) for qi in q)
+        return b * math.log(sum_exp)
+
 
 def lmsr_probability(q, b):
     """
