@@ -58,7 +58,7 @@ cartesi-coprocessor start-devnet && cartesi-coprocessor publish --network devnet
 cartesi-coprocessor address-book
 ```
 
-5. deploy contract
+5. deploy `MultiOutcomePredictionMarket` contract
 
 ```bash
 cartesi-coprocessor deploy --contract-name MultiOutcomePredictionMarket --network devnet --constructor-args <devnet_task_issuer> <Machine Hash>
