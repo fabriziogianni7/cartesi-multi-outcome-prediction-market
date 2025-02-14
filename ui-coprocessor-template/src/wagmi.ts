@@ -1,16 +1,17 @@
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
-import { holesky, anvil } from 'wagmi/chains'
+import {  anvil } from 'wagmi/chains'
 import { coinbaseWallet, injected, walletConnect } from 'wagmi/connectors'
+import {process} from 'dotenv'
 
 export function getConfig() {
   return createConfig({
-    chains: [holesky, anvil],
+    chains: [anvil],
     connectors: [
       // injected(),
       // coinbaseWallet(),
-      // walletConnect({ 
-      //   projectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID ?? 'default-project-id' 
-      // }),
+      walletConnect({ 
+        projectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID ?? 'default-project-id' 
+       }),
     ],
     storage: createStorage({
       storage: cookieStorage,
@@ -18,7 +19,6 @@ export function getConfig() {
     syncConnectedChain: true,
     ssr: true,
     transports: {
-      [holesky.id]: http(),
       [anvil.id]: http(),
     },
   })

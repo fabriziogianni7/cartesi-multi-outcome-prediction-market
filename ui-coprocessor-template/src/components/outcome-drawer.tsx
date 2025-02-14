@@ -79,103 +79,76 @@ const CustomBar = ({ x, y, width, height, fill, onClick, ...others }: any) => {
     );
 };
 
+interface OutcomeDrawerProps {
+    outcomes: string[]; // Accept outcomes as a prop
+    probabilities: number[]; // Accept probabilities as a prop
+}
 
-export function OutcomeDrawer() {
+export function OutcomeDrawer({ outcomes, probabilities }: OutcomeDrawerProps) {
     const [open, setOpen] = React.useState(false);
-    const [selectedDriver, setSelectedDriver] = React.useState({ outcome: "", details: "" });
     const [shares, setShares] = React.useState<number | ''>('');
-    const { writeContract } = useWriteContract()
-
-    const result = useReadContract({
-        abi: testAbi,
-        address: '0x6b175474e89094c44da98b954eedeac495271d0f',
-        functionName: 'totalSupply',
-    })
-
-
-
-
-    const handleBarClick = (data: any) => {
-        setSelectedDriver(data);
-        setOpen(true);
-    };
-
+    const { writeContract } = useWriteContract();
 
     const handleConfirm = async () => {
         if (!shares) {
             alert('Please enter the number of shares.');
             return;
         }
-        writeContract({
-            abi: testAbi,
-            address: '0x6b175474e89094c44da98b954eedeac495271d0f',
-            functionName: 'transferFrom',
-            args: [
-                '0xd2135CfB216b74109775236E36d4b433F1DF507B',
-                '0xA0Cf798816D4b9b9866b5330EEa46a18382f251e',
-                BigInt(123),
-            ],
-        })
-
+        // Implement your contract write logic here
     };
 
+    // Log outcomes and probabilities for debugging
+    console.log('Outcomes:', outcomes);
+    console.log('Probabilities:', probabilities);
+
+    // Check if outcomes and probabilities are defined and have the same length
+    if (!outcomes || !probabilities || outcomes.length !== probabilities.length) {
+        return <p>Error: Outcomes and probabilities must be defined and of the same length.</p>;
+    }
 
     return (
         <Drawer>
             <DrawerTrigger asChild>
-                <Button variant="outline">See Possible Outcomes</Button>
+                <Button variant="outline" onClick={() => setOpen(true)}>See Possible Outcomes</Button>
             </DrawerTrigger>
-            <DrawerContent >
-                <div className="mx-auto w-full max-w-6xl ">
-                    <DrawerHeader>
-                        <DrawerTitle>Who's going to win Formula 1 Championship in 2025?</DrawerTitle>
-                        <DrawerDescription>Place your prediction.</DrawerDescription>
-                    </DrawerHeader>
-                    <div className="p-4 pb-0">
-                        <div className="h-[400px]">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={data}
-                                    margin={{
-                                        top: 55,
-                                        right: 30, // Added right margin for better spacing
-                                        left: 20,  // Added left margin for better spacing
-                                        bottom: 50,
-                                    }}>
-                                    <Bar dataKey="votes" barSize={40} shape={(props: any) => (
-                                        <CustomBar {...props} fill={calculateColor(props.payload.votes, maxVotes)}
-                                            onClick={() => handleBarClick(props.payload)}
-                                        />
-                                    )}>
-                                        {/* Driver names below the bar */}
-                                        <LabelList
-                                            dataKey="outcome"
-                                            position="top"
-                                            angle={-75}
-                                            style={{ fill: 'red', fontWeight: 'bold' }}
-                                            formatter={(value: any) => {
-                                                const nameParts = value.split(' ');
-                                                return nameParts[nameParts.length - 1];
-                                            }}
-                                        />
-                                        {/* Votes percentage above the bar */}
-                                        <LabelList
-                                            dataKey="votes"
-                                            position="bottom"
-                                            formatter={(value: any) => `${value}%`}
-                                        />
-                                    </Bar>
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
+            <DrawerContent>
+                <DrawerHeader>
+                    <DrawerTitle>Possible Outcomes</DrawerTitle>
+                    <DrawerDescription>Place your prediction.</DrawerDescription>
+                </DrawerHeader>
+                <div className="p-4 pb-0">
+                    <div className="h-[400px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={outcomes.map((outcome, index) => ({ outcome, votes: probabilities[index] }))} // Map outcomes and probabilities
+                                margin={{
+                                    top: 55,
+                                    right: 30,
+                                    left: 20,
+                                    bottom: 50,
+                                }}>
+                                <Bar dataKey="votes" barSize={40} shape={(props: any) => (
+                                    <CustomBar {...props} fill={calculateColor(props.payload.votes, Math.max(...probabilities))} />
+                                )}>
+                                    <LabelList
+                                        dataKey="outcome"
+                                        position="top"
+                                        angle={-75}
+                                        style={{ fill: 'red', fontWeight: 'bold' }}
+                                    />
+                                    <LabelList
+                                        dataKey="votes"
+                                        position="bottom"
+                                        formatter={(value: any) => `${value}%`}
+                                    />
+                                </Bar>
+                            </BarChart>
+                        </ResponsiveContainer>
                     </div>
                 </div>
                 <Dialog open={open} onOpenChange={setOpen}>
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>{selectedDriver.outcome}</DialogTitle>
-                            <DialogDescription>
-                                {selectedDriver.details}
-                            </DialogDescription>
+                            <DialogTitle>Select Outcome</DialogTitle>
                         </DialogHeader>
                         <div className="space-y-2">
                             <label htmlFor="shares" className="block mb-1">Number of Shares:</label>
@@ -192,7 +165,6 @@ export function OutcomeDrawer() {
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
-
             </DrawerContent>
         </Drawer>
     )
