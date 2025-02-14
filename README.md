@@ -6,6 +6,7 @@
 - [Flow](#flow)
 - [Screenshots](#screenshots)
 - [Install Dependencies](#install-dependencies)
+- [Run Tests](#run-tests)
 ## Description
 
 This project is a Multi-Outcome Prediction Market entirely on-chain, powered by Cartesi and EigenLayer. 
@@ -32,6 +33,14 @@ This approach makes sophisticated prediction markets accessible, accurate, and v
 ```bash
     make install-all
 ```
+
+## Run Tests
+
+```bash
+    cd contracts && forge test
+```
+![Screenshot 2025-02-14 alle 18 34 08](https://github.com/user-attachments/assets/577123f7-7f1d-43c6-a770-d75119b87d5c)
+
 
 &nbsp;
 &nbsp;
