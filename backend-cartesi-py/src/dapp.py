@@ -14,10 +14,35 @@ logger.info(f"HTTP rollup_server url is {rollup_server}")
 
 
 def encode_uint(x):
+    """Encode unsigned integer to 32 bytes"""
+    if x < 0:
+        raise ValueError(f"Cannot encode negative value {x} as uint")
     return x.to_bytes(32, byteorder='big', signed=False)
 
 def encode_int(x):
+    """Encode signed integer to 32 bytes"""
     return x.to_bytes(32, byteorder='big', signed=True)
+
+def encode_notice_element_in_array(notice):
+    finalPrice, requestId, updatedSharesList = notice
+    dynamic_offset = 3 * 32  # 96
+    head = encode_int(finalPrice) + encode_uint(requestId) + encode_uint(dynamic_offset)
+    tail = encode_uint(len(updatedSharesList))
+    for val in updatedSharesList:
+        # Use encode_int instead of encode_uint for share values since they can be negative
+        tail += encode_int(val)
+    return head + tail
+
+def encode_notice_array(notice_list):
+    # Array encoding is: [ array length ] || [offset table] || [concatenated element encodings]
+    elements = [encode_notice_element_in_array(n) for n in notice_list]
+    base = len(notice_list) * 32
+    offsets = []
+    current = 0
+    for e in elements:
+        offsets.append(encode_uint(base + current))
+        current += len(e)
+    return encode_uint(len(notice_list)) + b''.join(offsets) + b''.join(elements)
 
 def encode_notice_top(notice):
     finalPrice, requestId, updatedSharesList = notice
@@ -25,9 +50,9 @@ def encode_notice_top(notice):
     head = encode_int(finalPrice) + encode_uint(requestId) + encode_uint(dynamic_offset)
     tail = encode_uint(len(updatedSharesList))
     for val in updatedSharesList:
-        tail += encode_uint(val)
+        # Use encode_int instead of encode_uint for share values since they can be negative
+        tail += encode_int(val)
     return head + tail
-
 def encode_notice_element_in_array(notice):
     finalPrice, requestId, updatedSharesList = notice
     dynamic_offset = 3 * 32  # 96
@@ -61,7 +86,8 @@ def handle_advance(data):
     payload_hex = data['payload']
 
     try:
-        payload_str = bytes.fromhex(payload_hex[2:]).decode('utf-8')
+        # Decode and strip extra null characters and whitespace.
+        payload_str = bytes.fromhex(payload_hex[2:]).decode('utf-8').strip('\x00 \n\r')
         print("Decoded payload:", payload_str)
         ids = []
         subarrays = []
@@ -69,20 +95,21 @@ def handle_advance(data):
             # Split the payload string into individual segments using the "],[" delimiter.
             array_parts = payload_str.split("],[")
             for part in array_parts:
-                # Remove any surrounding brackets and whitespace from each segment.
-                part = part.strip("[] ")
-                if part:
-                    # Split the segment by commas.
-                    elements = [elem.strip() for elem in part.split(',') if elem.strip()]
-                    if elements and elements[0].startswith("id:"):
-                        # Extract the numerical id from the first element.
-                        id_val = int(elements[0].split("id:")[1])
-                        ids.append(id_val)
-                        # Convert the remaining elements to integers for the subarray.
-                        number_array = [int(num) for num in elements[1:]]
-                        subarrays.append(number_array)
-                    else:
-                        raise ValueError("Segment does not start with 'id:'")
+                # Remove any surrounding brackets, whitespace, and nulls.
+                part = part.strip("[] \x00\n\r")
+                if not part:
+                    continue  # Skip empty parts.
+                # Split the segment by commas.
+                elements = [elem.strip() for elem in part.split(',') if elem.strip()]
+                if elements and elements[0].startswith("id:"):
+                    # Extract the numerical id from the first element.
+                    id_val = int(elements[0].split("id:")[1])
+                    ids.append(id_val)
+                    # Convert the remaining elements to integers for the subarray.
+                    number_array = [int(num) for num in elements[1:]]
+                    subarrays.append(number_array)
+                else:
+                    raise ValueError("Segment does not start with 'id:'")
             print("Extracted ids:", ids)
             print("Converted subarrays:", subarrays)
         except ValueError as error:
@@ -185,7 +212,6 @@ def handle_advance(data):
         emit_notice({"payload": encoded_hex})
         return "accept"
     else:
-        print("Invalid method or missing counter value")
         return "reject"
 
 handlers = {

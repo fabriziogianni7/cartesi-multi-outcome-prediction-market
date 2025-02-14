@@ -30,10 +30,10 @@ def parse_payload(payload_str):
 
 def main():
     # Provided input string for testing.
-    test_input = "[id:44,-2,3,3,2],[id:22,3,2,3,1],[id:45,-2,-1,4,-2,25,2]"
+    test_input = "[id:1,1,0,3,0],[id:2,1,0,3,0]"
     # Convert the test input string to hex with a prefix "0x", simulating the expected payload_hex format.
     payload_hex = "0x" + test_input.encode('utf-8').hex()
-    
+    print("Payload hex:", payload_hex)
     # The original logic strips the "0x" before decoding.
     payload_str = bytes.fromhex(payload_hex[2:]).decode('utf-8')
     
