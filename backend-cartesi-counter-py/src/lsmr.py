@@ -68,20 +68,78 @@ def lmsr_probability(q, b):
     exp_q = [math.exp(qi / b) for qi in q]
     sum_exp = sum(exp_q)
     return [e / sum_exp for e in exp_q]
+    
+def main():
+    # Liquidity parameter (adjust as needed)
+    b = 100.0
 
-# Example usage:
-# if __name__ == "__main__":
-#     # Example with 3 outcomes, initial shares, and liquidity parameter
-#     q = [10, 10, 10]  # Shares for each outcome, initially equal
-#     b = 100.0  # Liquidity parameter
+    # Define initial shares distribution.
+    initial_shares = [40, 10, 40]
+    print("Initial shares distribution:", initial_shares)
+
+    # Calculate starting probabilities (each probability multiplied by 100 will sum to 100%)
+    initial_probs = lmsr_probability(initial_shares, b)
+    print("Starting probabilities (in %):")
+    for i, prob in enumerate(initial_probs):
+        print(f"Option {i}: {prob * 100:.2f}%")
+    print("Total: {:.2f}%".format(sum(initial_probs) * 100))
     
-#     print(f"Cost of current share distribution: {lmsr_cost(q, b)}")
+    # Define the number of shares to adjust for each outcome.
+    # Positive numbers mean buying shares; negative numbers mean selling shares.
+    shares_to_buy = [1, 0, 1]
+    print("\nShares to buy/sell per option:", shares_to_buy)
     
-#     # Price to buy one more share for outcome 0
-#     print(f"Price to buy one more share for outcome 0: {lmsr_price(q, b, 0)}")
+    total_cost = 0.0
+    current_shares = initial_shares.copy()
+    # remaining_to_buy indicates how many adjustments remain 
+    remaining_to_buy = shares_to_buy.copy()
+
+    cycle = 1
+    # Continue until all desired share adjustments (both buys and sells) are complete.
+    while any(r != 0 for r in remaining_to_buy):
+        print(f"\nCycle {cycle}:")
+        for i in range(len(remaining_to_buy)):
+            if remaining_to_buy[i] > 0:  # Buying one share.
+                cost_before = lmsr_cost(current_shares, b)
+                current_shares[i] += 1  # Buy one share.
+                remaining_to_buy[i] -= 1
+                cost_after = lmsr_cost(current_shares, b)
+                cost = cost_after - cost_before  # Positive incremental cost.
+                total_cost += cost
+                print(f"  Option {i}: Bought 1 share at cost {cost:.4f}")
+            elif remaining_to_buy[i] < 0:  # Selling one share.
+                cost_before = lmsr_cost(current_shares, b)
+                current_shares[i] -= 1  # Sell one share.
+                remaining_to_buy[i] += 1  # Moving toward zero.
+                cost_after = lmsr_cost(current_shares, b)
+                cost = cost_after - cost_before  # Negative incremental cost (refund).
+                total_cost += cost
+                print(f"  Option {i}: Sold 1 share for refund {abs(cost):.4f}")
+        cycle += 1
+
+    print("\nFinal shares distribution after transactions:", current_shares)
+    print("Net cost for transactions: {:.4f}".format(total_cost))
     
-#     # Probabilities of each outcome
-#     probabilities = lmsr_probability(q, b)
-#     for i, prob in enumerate(probabilities):
-#         print(f"Probability of outcome {i}: {prob}")    print(f"Probability of outcome {i}: {prob}")
-        
+    # Calculate updated probabilities based on the new shares distribution.
+    updated_probs = lmsr_probability(current_shares, b)
+    print("\nUpdated probabilities (in %):")
+    for i, prob in enumerate(updated_probs):
+        print(f"Option {i}: {prob * 100:.2f}%")
+    print("Total: {:.2f}%".format(sum(updated_probs) * 100))
+    
+    print("\nInitial probabilities (solidity compatible, 6 decimals):")
+    for i, prob in enumerate(initial_probs):
+        solidity_value = int(round(prob * 1e6))
+        print(f"Option {i}: {solidity_value}   # represents {prob:.6f}")
+    print("Total (solidity fixed 6 decimals):", int(round(sum(initial_probs) * 1e6)))
+    
+    print("\nUpdated probabilities (solidity compatible, 6 decimals):")
+    for i, prob in enumerate(updated_probs):
+        solidity_value = int(round(prob * 1e6))
+        print(f"Option {i}: {solidity_value}   # represents {prob:.6f}")
+    print("Total (solidity fixed 6 decimals):", int(round(sum(updated_probs) * 1e6)))
+
+
+if __name__ == '__main__':
+    main()
+

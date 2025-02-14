@@ -30,7 +30,7 @@ contract MultiOutcomePredictionMarket is CoprocessorAdapter {
     mapping(uint requestId => Request request) public s_requests;
     mapping(uint marketId => uint[] winningOutcomes) public s_winningOutcomes;
     mapping(uint marketId => uint prizePool) public s_prizePools;
-
+    
     struct Market {
         string question;
         string[] outcomesOptions;
@@ -39,6 +39,7 @@ contract MultiOutcomePredictionMarket is CoprocessorAdapter {
     }
 
     struct Request {
+        uint marketId;
         uint deadline;
         address requester;
         bool isFullfilled;
@@ -47,8 +48,6 @@ contract MultiOutcomePredictionMarket is CoprocessorAdapter {
 
     struct Notice {
         int256 finalPrice;
-        address requesters;
-        uint256 marketId;
         uint256 requestId;
         uint[] updatedSharesList;
     }
@@ -81,13 +80,13 @@ contract MultiOutcomePredictionMarket is CoprocessorAdapter {
         emit MarketCreated(s_marketId, _question, _outcomesOptions);
     }
 
-    function runExecution(bytes calldata input) external /*onlyKeeper*/{
-        callCoprocessor(input);
-    }
+    
+ 
 
     function manageShares(uint256 _marketId, uint256 _deadline, bytes memory _encodedListOfInt) public {
         ++requestCounter;
         s_requests[requestCounter] = Request({
+            marketId: _marketId,
             deadline: _deadline,
             inputBytes: _encodedListOfInt,
             requester: msg.sender,
@@ -123,7 +122,7 @@ contract MultiOutcomePredictionMarket is CoprocessorAdapter {
                 /* try (IERC20(erc20Token).transferFrom(msg.sender, address(this), _amount)) {
                     continue;
                 } catch (bytes memory reason) {
-                    continue;
+                    //fulfill;
                 } */
             }
             
