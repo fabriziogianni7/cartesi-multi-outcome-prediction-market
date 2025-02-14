@@ -16,11 +16,9 @@ def encode_abi_data(probabilities, outcome_index, total_price_for_specific_outco
     for j, prob in enumerate(probabilities):
         solidity_value = int(round(prob * 1e6))
         print(f"solidity value", solidity_value)
-       
         probabilities_converted.append(solidity_value)
         
     total_price_for_specific_outcome_converted = int(round(total_price_for_specific_outcome * 1e6))
-                
     
     encoded_data = encode(types, [probabilities_converted, outcome_index, total_price_for_specific_outcome_converted,n_shares,marketId,address])
     # Return the hex string with '0x' prefix for consistency with most blockchain interactions
