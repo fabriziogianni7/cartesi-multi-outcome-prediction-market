@@ -40,7 +40,7 @@ contract MultiOutcomePredictionMarket is CoprocessorAdapter {
 
     struct Request {
         uint marketId;
-        uint deadline;g
+        uint deadline;
         address requester;
         bool isFullfilled;
         bytes inputBytes;
@@ -81,7 +81,9 @@ contract MultiOutcomePredictionMarket is CoprocessorAdapter {
     }
 
     
- 
+    function runExecution(bytes calldata input) external /*onlyKeeper*/{
+        callCoprocessor(input);
+    }
 
     function manageShares(uint256 _marketId, uint256 _deadline, bytes memory _encodedListOfInt) public {
         ++requestCounter;
@@ -115,14 +117,19 @@ contract MultiOutcomePredictionMarket is CoprocessorAdapter {
             if (s_requests[notices[i].requestId].deadline < block.timestamp) {
                 continue;
             }
-            s_userShares[notices[i].requesters][notices[i].marketId] = notices[i].updatedSharesList;
+            
             if (notices[i].finalPrice < 0) {
-                //IERC20(erc20Token).transfer(notices[i].requesters, uint256(-notices[i].finalPrice));
+                Request memory request = s_requests[notices[i].requestId];
+                s_userShares[request.requester][request.marketId] = notices[i].updatedSharesList;
+                s_requests[notices[i].requestId].isFullfilled = true;
+                //IERC20(erc20Token).transfer(request.requester), uint256(-notices[i].finalPrice));
             } else {
-                /* try (IERC20(erc20Token).transferFrom(msg.sender, address(this), _amount)) {
+                Request memory request = s_requests[notices[i].requestId];
+                s_userShares[request.requester][request.marketId] = notices[i].updatedSharesList;
+                /* try (IERC20(erc20Token).transferFrom(request.requester, address(this), _amount)) {
                     continue;
                 } catch (bytes memory reason) {
-                    //fulfill;
+                    s_requests[notices[i].requestId].isFullfilled = true;
                 } */
             }
             
