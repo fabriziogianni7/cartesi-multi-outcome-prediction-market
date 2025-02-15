@@ -99,7 +99,18 @@ contract MultiOutcomePredictionMarket is CoprocessorAdapter {
         emit ResultReceived(inputPayloadHash, notice);
     }
 
-    function getMarket(uint256 marketId) public view returns (Market memory) {
-        return s_markets[marketId];
+    function getMarket(uint256 marketId) public view returns (string memory question, uint256[] memory circulatingShares, string[] memory outcomes, uint256 liquidity, bool isResolved, uint256[] memory probabilities) {
+        return (s_markets[marketId].question,
+            s_markets[marketId].circulatingShares,
+            s_markets[marketId].outcomes,
+            s_markets[marketId].liquidity,
+            s_markets[marketId].isResolved,
+            s_markets[marketId].probabilities
+        );
     }
+
+    function getUserShares(address user, uint256 marketId) public view returns (uint256[] memory shares) {
+        return s_userShares[user][marketId];
+    }
+
 }
