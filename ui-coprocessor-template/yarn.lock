@@ -1966,7 +1966,7 @@ dotenv-expand@^10.0.0:
   resolved "https://registry.npmjs.org/dotenv-expand/-/dotenv-expand-10.0.0.tgz"
   integrity sha512-GopVGCpVS1UKH75VKHGuQFqS1Gusej0z4FyQkPdwjil2gNIv+LNsqBlboOzpJFZKVT95GkCyWJbBSdFEFUWI2A==
 
-dotenv@^16.3.1:
+dotenv@^16.3.1, dotenv@^16.4.7:
   version "16.4.7"
   resolved "https://registry.npmjs.org/dotenv/-/dotenv-16.4.7.tgz"
   integrity sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==
@@ -3812,7 +3812,7 @@ victory-vendor@^36.6.8:
     d3-time "^3.0.0"
     d3-timer "^3.0.1"
 
-viem@^2.1.1, viem@2.x, viem@latest:
+viem@^2.1.1, viem@^2.21.55, viem@2.x:
   version "2.21.55"
   resolved "https://registry.npmjs.org/viem/-/viem-2.21.55.tgz"
   integrity sha512-PgXew7C11cAuEtOSgRyQx2kJxEOPUwIwZA9dMglRByqJuFVA7wSGZZOOo/93iylAA8E15bEdqy9xulU3oKZ70Q==
@@ -3827,7 +3827,7 @@ viem@^2.1.1, viem@2.x, viem@latest:
     webauthn-p256 "0.0.10"
     ws "8.18.0"
 
-wagmi@latest:
+wagmi@^2.14.3:
   version "2.14.3"
   resolved "https://registry.npmjs.org/wagmi/-/wagmi-2.14.3.tgz"
   integrity sha512-sr8o7+EBw22GhieDyXLv8Zr2vgC6xKrYoSuUIpq0xOqEhvMP1q880VtR4lFG1capc2QEWvK72pJ/+jpsEQcMYQ==

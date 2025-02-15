@@ -1,4 +1,5 @@
-export const MultiOutcomePredictionMarketAddress = "0x1429859428C0aBc9C2C47C8Ee9FBaf82cFA0F20f";
+export const MultiOutcomePredictionMarketAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
+export const marketId = process.env.NEXT_PUBLIC_MARKET_ID;
 
 export const MultiOutcomePredictionMarket = [
     {

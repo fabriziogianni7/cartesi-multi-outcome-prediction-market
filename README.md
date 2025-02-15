@@ -8,6 +8,7 @@
 - [Screenshots](#screenshots)
 - [Install Dependencies](#install-dependencies)
 - [Run The Project Locally](#run-the-project-locally)
+- [Running Frontend](#run-frontend)
 - [Run Tests](#run-tests)
 
 ## Description
@@ -80,6 +81,27 @@ cast send <deployed contract> "prepareCallAndRunExecution(uint256,uint256,uint25
 
 ```bash
 cast call <deployed contract> "getMarket(uint256)" 1 --rpc-url http://127.0.0.1:8545
+```
+
+## Running Frontend
+
+1. access FE folder
+
+```bash
+cd ui-coprocessor-template
+```
+
+2. create .env file with these variables
+
+```js
+NEXT_PUBLIC_CONTRACT_ADDRESS = 0x1429859428c0abc9c2c47c8ee9fbaf82cfa0f20f;
+NEXT_PUBLIC_MARKET_ID = 4;
+```
+
+3. run FE
+
+```
+npm run dev
 ```
 
 ## Run Tests

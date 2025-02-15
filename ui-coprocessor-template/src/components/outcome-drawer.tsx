@@ -25,7 +25,7 @@ import { Bar, BarChart, LabelList, ResponsiveContainer } from "recharts"
 import { Input } from "./ui/input"
 import { useWriteContract, useReadContract } from 'wagmi'
 
-import { MultiOutcomePredictionMarket, MultiOutcomePredictionMarketAddress } from '../contracts-abi/MultiOutcomePredictionMarketABI'
+import { marketId, MultiOutcomePredictionMarket, MultiOutcomePredictionMarketAddress } from '../contracts-abi/MultiOutcomePredictionMarketABI'
 interface OutcomeDrawerProps {
     outcomes: string[];
     probabilities: number[];
@@ -50,14 +50,14 @@ function calculateColor(probability: number, maxProbability: number): string {
 const CustomBar = ({ x, y, width, height, fill, onClick, index, ...others }: any) => {
     return (
         <g>
-            <rect 
-                x={x} 
-                y={y} 
-                width={width} 
-                height={height} 
-                fill={fill} 
+            <rect
+                x={x}
+                y={y}
+                width={width}
+                height={height}
+                fill={fill}
                 onClick={() => onClick(index)}
-                style={{ cursor: 'pointer' }} 
+                style={{ cursor: 'pointer' }}
             />
             {React.Children.map(others.children, child =>
                 React.cloneElement(child, { x, y, width, height })
@@ -106,7 +106,7 @@ export function OutcomeDrawer({ outcomes, probabilities }: OutcomeDrawerProps) {
             alert('Please select an outcome first.');
             return;
         }
-        
+
         console.log('Confirming purchase:', {
             marketId: 1,
             outcomeIndex: selectedOutcome.index,
@@ -116,10 +116,10 @@ export function OutcomeDrawer({ outcomes, probabilities }: OutcomeDrawerProps) {
         try {
             await writeContract({
                 abi: MultiOutcomePredictionMarket,
-                address: MultiOutcomePredictionMarketAddress,
+                address: MultiOutcomePredictionMarketAddress as string,
                 functionName: 'prepareCallAndRunExecution',
                 args: [
-                    BigInt(2), // marketId hardcoded to 1
+                    BigInt(marketId as string), // marketId hardcoded to 1
                     BigInt(selectedOutcome.index), // outcomeIndex from selected option
                     BigInt(shares), // nShares from input field
                 ],
@@ -154,7 +154,7 @@ export function OutcomeDrawer({ outcomes, probabilities }: OutcomeDrawerProps) {
                                         bottom: 50,
                                     }}>
                                     <Bar dataKey="probability" barSize={40} shape={(props: any) => (
-                                        <CustomBar 
+                                        <CustomBar
                                             {...props}
                                             index={props.index}
                                             fill={calculateColor(props.payload.probability, maxProbability)}
@@ -182,7 +182,7 @@ export function OutcomeDrawer({ outcomes, probabilities }: OutcomeDrawerProps) {
                         </div>
                     </div>
                 </div>
-                
+
                 <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                     <DialogContent>
                         <DialogHeader>
