@@ -3,7 +3,6 @@
 ## Index
 
 - [Description](#description)
-- [Resources](#resources)
 - [Architecture](#architecture)
 - [Flow](#flow)
 - [Screenshots](#screenshots)
@@ -11,6 +10,7 @@
 - [Run The Project Locally](#run-the-project-locally)
 - [Running Frontend](#run-frontend)
 - [Run Tests](#run-tests)
+- [Resources](#resources)
 
 ## Description
 
@@ -23,10 +23,6 @@ Boosts Scalability: Enhances speed and efficiency of market operations.
 Ensures Security: With on-chain verification of off-chain results.
 
 This approach makes sophisticated prediction markets accessible, accurate, and versatile, leveraging Cartesi's technology for a better user experience.
-
-## Resources
-- [excalidraw with project design](https://excalidraw.com/#room=6a5a2d1e4c0f60385dff,HtnWmctftA1WsW9ryKvbXw)
-- [video demo](https://www.youtube.com/watch?v=cyNQ3flsK1I)
 
 ## Architecture
 
@@ -116,6 +112,10 @@ npm run dev
 ```
 
 ![Screenshot 2025-02-14 alle 18 34 08](https://github.com/user-attachments/assets/577123f7-7f1d-43c6-a770-d75119b87d5c)
+
+## Resources
+- [excalidraw with project design](https://excalidraw.com/#room=6a5a2d1e4c0f60385dff,HtnWmctftA1WsW9ryKvbXw)
+- [video demo](https://www.youtube.com/watch?v=cyNQ3flsK1I)
 
 &nbsp;
 &nbsp;
