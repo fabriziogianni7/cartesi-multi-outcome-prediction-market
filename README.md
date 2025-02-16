@@ -13,8 +13,10 @@
 
 ## Description
 ---
-[!!!excalidraw with project design here!!!](https://excalidraw.com/#room=6a5a2d1e4c0f60385dff,HtnWmctftA1WsW9ryKvbXw)
+<sub>[!!!excalidraw with project design here!!!](https://excalidraw.com/#room=6a5a2d1e4c0f60385dff,HtnWmctftA1WsW9ryKvbXw)</sub>
 ---
+
+
 This project is a Multi-Outcome Prediction Market entirely on-chain, powered by Cartesi and EigenLayer.
 
 Calculating share prices for multiple outcomes using the LSMR formula is computationally intensive and costly on the blockchain. Cartesi's Coprocessor offloads these calculations:
