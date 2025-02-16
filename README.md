@@ -10,7 +10,7 @@
 - [Run The Project Locally](#run-the-project-locally)
 - [Running Frontend](#run-frontend)
 - [Run Tests](#run-tests)
-- [Resources](#resources)
+- [Project Design And Video Demo](#project-design-and-video-demo)
 
 ## Description
 
@@ -113,7 +113,7 @@ npm run dev
 
 ![Screenshot 2025-02-14 alle 18 34 08](https://github.com/user-attachments/assets/577123f7-7f1d-43c6-a770-d75119b87d5c)
 
-## Resources
+## Project Design And Video Demo
 - [excalidraw with project design](https://excalidraw.com/#room=6a5a2d1e4c0f60385dff,HtnWmctftA1WsW9ryKvbXw)
 - [video demo](https://www.youtube.com/watch?v=cyNQ3flsK1I)
 
