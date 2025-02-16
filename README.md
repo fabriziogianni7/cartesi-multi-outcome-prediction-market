@@ -3,6 +3,7 @@
 ## Index
 
 - [Description](#description)
+- [Resources](#resources)
 - [Architecture](#architecture)
 - [Flow](#flow)
 - [Screenshots](#screenshots)
@@ -23,13 +24,13 @@ Ensures Security: With on-chain verification of off-chain results.
 
 This approach makes sophisticated prediction markets accessible, accurate, and versatile, leveraging Cartesi's technology for a better user experience.
 
-## Architecture
-
-![cartesi](https://github.com/user-attachments/assets/809fa84b-2e33-43e9-b95c-419598d7cfbd)
-
 ## Resources
 - [excalidraw with project design](https://excalidraw.com/#room=6a5a2d1e4c0f60385dff,HtnWmctftA1WsW9ryKvbXw)
 - [video demo](https://www.youtube.com/watch?v=cyNQ3flsK1I)
+
+## Architecture
+
+![cartesi](https://github.com/user-attachments/assets/809fa84b-2e33-43e9-b95c-419598d7cfbd)
 
 ## Flow
 
