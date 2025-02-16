@@ -122,4 +122,4 @@ npm run dev
 
 ---
 
-<sub>Built by [@fabriziogianni7](https://twitter.com/fabriziogianni7) and [@SolidityDrone](https://twitter.com/SolidityDrone)</sub>
+<sub>Built by [@fabriziogianni7](https://twitter.com/fabriziogianni7) and [@SolidityDrone](https://twitter.com/SolidityDrone) - use at your own risk.</sub>
