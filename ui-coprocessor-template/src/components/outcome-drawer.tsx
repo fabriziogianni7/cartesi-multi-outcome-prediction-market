@@ -23,9 +23,13 @@ import {
 } from "@/components/ui/dialog"
 import { Bar, BarChart, LabelList, ResponsiveContainer } from "recharts"
 import { Input } from "./ui/input"
-import { useWriteContract, useReadContract } from 'wagmi'
+import { useWriteContract, useTransactionReceipt } from 'wagmi'
 
 import { marketId, MultiOutcomePredictionMarket, MultiOutcomePredictionMarketAddress } from '../contracts-abi/MultiOutcomePredictionMarketABI'
+import { useEffect } from "react"
+import { Toaster } from "@/components/ui/sonner"
+import { toast } from "sonner"
+
 interface OutcomeDrawerProps {
     outcomes: string[];
     probabilities: number[];
@@ -53,7 +57,7 @@ const CustomBar = ({ x, y, width, height, fill, onClick, index, ...others }: any
             <rect
                 x={x}
                 y={y}
-                width={width}
+                width={width + 100}
                 height={height}
                 fill={fill}
                 onClick={() => onClick(index)}
@@ -71,7 +75,49 @@ export function OutcomeDrawer({ outcomes, probabilities }: OutcomeDrawerProps) {
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const [selectedOutcome, setSelectedOutcome] = React.useState<OutcomeData | null>(null);
     const [shares, setShares] = React.useState<number | ''>('');
-    const { writeContract } = useWriteContract();
+    const { writeContract, data: txHash } = useWriteContract();
+    const { isSuccess, isError, isLoading } = useTransactionReceipt({ hash: txHash });
+
+
+    useEffect(() => {
+
+        if (isLoading) {
+            setDrawerOpen(false)
+            toast("Transaction is pending", {
+                description: `tx hash: ${txHash}`,
+                action: {
+                    label: "View",
+                    onClick: () => window.open(`https://holesky.etherscan.io/tx/${txHash}`),
+                },
+            })
+        }
+    }, [isLoading])
+
+    useEffect(() => {
+        if (isSuccess) {
+            setDrawerOpen(false)
+            toast("Transaction is succesful", {
+                description: `tx hash: ${txHash}`,
+                action: {
+                    label: "View",
+                    onClick: () => window.open(`https://holesky.etherscan.io/tx/${txHash}`),
+                },
+            })
+        }
+    }, [isSuccess])
+
+    useEffect(() => {
+        if (isError) {
+            setDrawerOpen(false)
+            toast("Transaction was not successful", {
+                description: `tx hash: ${txHash}`,
+                action: {
+                    label: "View",
+                    onClick: () => window.open(`https://holesky.etherscan.io/tx/${txHash}`),
+                },
+            })
+        }
+    }, [isError])
 
     // Transform data with index
     const data = React.useMemo(() => {
@@ -140,7 +186,7 @@ export function OutcomeDrawer({ outcomes, probabilities }: OutcomeDrawerProps) {
             <DrawerContent>
                 <div className="mx-auto w-full max-w-6xl">
                     <DrawerHeader>
-                        <DrawerTitle>Who's going to win Formula 1 Championship in 2025?</DrawerTitle>
+                        <DrawerTitle>Who will end in the top 3 in 2025 F1 Champrionship?</DrawerTitle>
                         <DrawerDescription>Place your prediction.</DrawerDescription>
                     </DrawerHeader>
                     <div className="p-4 pb-0">
@@ -174,7 +220,7 @@ export function OutcomeDrawer({ outcomes, probabilities }: OutcomeDrawerProps) {
                                         <LabelList
                                             dataKey="probability"
                                             position="bottom"
-                                            formatter={(value: any) => `${value.toFixed(2)}%`}
+                                            formatter={(value: any) => `${(Math.floor(value * 10) / 10).toFixed(1) + '%'}`}
                                         />
                                     </Bar>
                                 </BarChart>
@@ -188,7 +234,7 @@ export function OutcomeDrawer({ outcomes, probabilities }: OutcomeDrawerProps) {
                         <DialogHeader>
                             <DialogTitle>{selectedOutcome?.outcome}</DialogTitle>
                             <DialogDescription>
-                                Current probability: {selectedOutcome?.probability.toFixed(2)}%
+                                Current probability: {selectedOutcome?.probability.toFixed(12)}%
                             </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-2">
@@ -207,6 +253,7 @@ export function OutcomeDrawer({ outcomes, probabilities }: OutcomeDrawerProps) {
                     </DialogContent>
                 </Dialog>
             </DrawerContent>
+            <Toaster />
         </Drawer>
     );
 }

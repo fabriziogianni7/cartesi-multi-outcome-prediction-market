@@ -1,11 +1,11 @@
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
-import { anvil } from 'wagmi/chains'
+import { anvil, holesky } from 'wagmi/chains'
 import { walletConnect } from 'wagmi/connectors'
 import 'dotenv'
 
 export function getConfig() {
   return createConfig({
-    chains: [anvil],
+    chains: [anvil, holesky],
     connectors: [
       // injected(),
       // coinbaseWallet(),
@@ -20,6 +20,7 @@ export function getConfig() {
     ssr: true,
     transports: {
       [anvil.id]: http(),
+      [holesky.id]: http(),
     },
   })
 }

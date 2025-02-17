@@ -33,7 +33,7 @@ export default function Page() {
   console.log('Market Data:', marketDataArray);
 
   const marketData = {
-    question: marketDataArray?.length && marketDataArray[0] as string,
+    question: "Who will end in the top 3 in 2025 F1?",
     circulatingShares: marketDataArray?.length && marketDataArray[1] as BigInt[],
     outcomes: marketDataArray?.length && marketDataArray[2] as string[],
     liquidity: marketDataArray?.length && marketDataArray[3],
@@ -43,6 +43,7 @@ export default function Page() {
 
   const circulatingSharesNumbers = marketData.circulatingShares.map((share: number) => Number(share));
   const probabilitiesNumbers = marketData.probabilities.map((prob: number) => Number(prob) / 1e4);
+  // console.log(probabilitiesNumbers)
   // debugger
   return (
     <div className="h-screen w-screen flex items-start justify-center bg-gray-100 dark:bg-gray-900">
