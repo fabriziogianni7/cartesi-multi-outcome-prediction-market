@@ -1,5 +1,5 @@
 # Cartesi Multi Outcome Prediction Market
-[Shipped on Vercel!](https://cartesi-multi-outcome-prediction-market.vercel.app/)
+[Shipped on Vercel and Holesky!](https://cartesi-multi-outcome-prediction-market.vercel.app/)
 ## Index
 
 - [Description](#description)
