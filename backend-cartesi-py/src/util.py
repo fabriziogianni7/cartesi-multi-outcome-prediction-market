@@ -14,7 +14,7 @@ def encode_abi_data(probabilities, outcome_index, total_price_for_specific_outco
     # converting in base 6
     probabilities_converted = []
     for j, prob in enumerate(probabilities):
-        solidity_value = int(round(prob * 1e6))
+        solidity_value = int(prob * 1e6)
         print(f"solidity value", solidity_value)
         probabilities_converted.append(solidity_value)
         

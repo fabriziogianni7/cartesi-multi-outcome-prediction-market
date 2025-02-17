@@ -29,7 +29,7 @@ def handle_advance(data):
     try:
         quantities, liquidity, outcome_index, n_shares, market_id, user_address = util.decode_abi_data(payload_hex)
         
-        probabilities, total_price_for_specific_outcome = calculate_values(quantities, liquidity, outcome_index, n_shares)
+        probabilities, total_price_for_specific_outcome = calculate_values(quantities, liquidity/1e6, outcome_index, n_shares)
         
         emit_notice({'payload': util.encode_abi_data(tuple(probabilities),outcome_index,total_price_for_specific_outcome,n_shares,market_id, user_address)})
         return "accept"
@@ -41,10 +41,19 @@ def handle_advance(data):
 def calculate_values(quantities, liquidity, outcome_index, n_shares):
     q = quantities
     b = liquidity
+    
+    
+    
+    total_price_for_specific_outcome = lsmr.total_price_for_specific_outcome(q,b,outcome_index,n_shares)
     market_cost = lsmr.lmsr_cost(q, b)
     one_share_cost = lsmr.lmsr_price(q, b, 0)
-    probabilities = lsmr.lmsr_probability(q, b)
-    total_price_for_specific_outcome = lsmr.total_price_for_specific_outcome(q,b,outcome_index,n_shares)
+    
+    updated_qs = quantities
+    updated_qs[outcome_index] + n_shares
+    updated_liquidity = b + total_price_for_specific_outcome
+    
+    
+    probabilities = lsmr.lmsr_probability(updated_qs, updated_liquidity)
         
     print(f"Cost of current share distribution: {market_cost}")
     print(f"Price to buy one more share for outcome 0: {one_share_cost}")
