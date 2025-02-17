@@ -162,13 +162,14 @@ export function OutcomeDrawer({ outcomes, probabilities }: OutcomeDrawerProps) {
         try {
             await writeContract({
                 abi: MultiOutcomePredictionMarket,
-                address: MultiOutcomePredictionMarketAddress as string,
+                address: MultiOutcomePredictionMarketAddress as `0x${string}`,
                 functionName: 'prepareCallAndRunExecution',
                 args: [
                     BigInt(marketId as string), // marketId hardcoded to 1
                     BigInt(selectedOutcome.index), // outcomeIndex from selected option
                     BigInt(shares), // nShares from input field
                 ],
+                account: null
             });
             setDialogOpen(false);
             setShares('');

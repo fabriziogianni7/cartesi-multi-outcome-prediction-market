@@ -16,11 +16,11 @@ interface MarketData {
 
 // Changed from "App" to "Page"
 export default function Page() {
-  const { data: marketDataArray, error, isLoading } = useReadContract<BigInt[]>({
-    address: MultiOutcomePredictionMarketAddress,
+  const { data: marketDataArray, error, isLoading } = useReadContract({
+    address: MultiOutcomePredictionMarketAddress as `0x${string}`,
     abi: MultiOutcomePredictionMarket,
     functionName: 'getMarket',
-    args: [marketId],
+    args: [marketId as string],
   });
 
   if (isLoading) return <p>Loading...</p>;
@@ -34,15 +34,15 @@ export default function Page() {
 
   const marketData = {
     question: "Who will end in the top 3 in 2025 F1?",
-    circulatingShares: marketDataArray?.length && marketDataArray[1] as BigInt[],
+    circulatingShares: marketDataArray?.length && marketDataArray[1] as unknown as BigInt[],
     outcomes: marketDataArray?.length && marketDataArray[2] as string[],
     liquidity: marketDataArray?.length && marketDataArray[3],
     isResolved: marketDataArray?.length && marketDataArray[4] as boolean,
-    probabilities: marketDataArray?.length && marketDataArray[5] as BigInt[],
+    probabilities: marketDataArray?.length && marketDataArray[5] as unknown as BigInt[],
   };
 
-  const circulatingSharesNumbers = marketData.circulatingShares.map((share: number) => Number(share));
-  const probabilitiesNumbers = marketData.probabilities.map((prob: number) => Number(prob) / 1e4);
+  const circulatingSharesNumbers = marketData.circulatingShares?.map((share: BigInt) => Number(share));
+  const probabilitiesNumbers = marketData.probabilities?.map((prob: BigInt) => Number(prob) / 1e4);
   // console.log(probabilitiesNumbers)
   // debugger
   return (
@@ -69,7 +69,7 @@ export default function Page() {
             <p>Liquidity: {marketData.liquidity ? (Number(marketData.liquidity) / 1e6).toString() + " USD" : "N/A"}</p>
             <p>Is Resolved: {marketData.isResolved ? 'Yes' : 'No'}</p>
           </div>
-          <OutcomeDrawer outcomes={marketData.outcomes} probabilities={probabilitiesNumbers} />
+          <OutcomeDrawer outcomes={marketData.outcomes!} probabilities={probabilitiesNumbers!} />
         </CardContent>
         <CardFooter className="text-center">
           <p className="text-sm text-gray-500 dark:text-gray-400">© 2025 - Powered By Cartesi & Eigenlayer</p>
