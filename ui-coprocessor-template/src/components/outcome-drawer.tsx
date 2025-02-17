@@ -106,18 +106,18 @@ export function OutcomeDrawer({ outcomes, probabilities }: OutcomeDrawerProps) {
         }
     }, [isSuccess])
 
-    useEffect(() => {
-        if (isError) {
-            setDrawerOpen(false)
-            toast("Transaction was not successful", {
-                description: `tx hash: ${txHash}`,
-                action: {
-                    label: "View",
-                    onClick: () => window.open(`https://holesky.etherscan.io/tx/${txHash}`),
-                },
-            })
-        }
-    }, [isError])
+    // useEffect(() => {
+    //     if (isError) {
+    //         setDrawerOpen(false)
+    //         toast("Transaction was not successful", {
+    //             description: `tx hash: ${txHash}`,
+    //             action: {
+    //                 label: "View",
+    //                 onClick: () => window.open(`https://holesky.etherscan.io/tx/${txHash}`),
+    //             },
+    //         })
+    //     }
+    // }, [isError])
 
     // Transform data with index
     const data = React.useMemo(() => {
